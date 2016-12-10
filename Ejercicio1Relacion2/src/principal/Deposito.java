@@ -6,7 +6,7 @@ public class Deposito {
 	
 	public synchronized void producir(Productores productores, int producido) {
 
-		if (capacidad != 0){
+		while (capacidad != 0){
 			try {
 				this.wait();
 			} catch (InterruptedException e) {
@@ -23,7 +23,7 @@ public class Deposito {
 
 	public synchronized void consumir(Consumidores consumidores, int consume) {
 	
-		if (capacidad == 0){
+		while (capacidad == 0){
 			try {
 				this.wait();
 			} catch (InterruptedException e) {
