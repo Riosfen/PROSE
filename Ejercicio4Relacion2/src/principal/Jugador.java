@@ -26,9 +26,6 @@ public class Jugador extends Thread{
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (JugadorException e) {
-			System.out.println("El jugaodr: " + getName() + " a acertado!!\nFin del juego!");
-			juego.setTerminado(true);
 		}
 		
 	}

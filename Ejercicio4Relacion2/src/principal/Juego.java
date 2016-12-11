@@ -7,7 +7,7 @@ public class Juego {
 	private int jugadores;
 	private int nuMax;
 	private int numAcertar;
-	private boolean terminado = false;
+	private boolean terminado;
 	private Jugador[] vJugador;
 	
 	public Juego(int jugadores, int nuMax) {
@@ -15,6 +15,7 @@ public class Juego {
 		this.jugadores = jugadores;
 		this.nuMax = nuMax;
 		numAcertar = new Random().nextInt(nuMax)+1;
+		terminado = false;
 		vJugador = new Jugador[jugadores];
 	}
 
@@ -25,22 +26,22 @@ public class Juego {
 			vJugador[i].start();
 		}
 		
+		this.notifyAll();
+		
 	}
 	
-	public synchronized void jugar(int numEscogido, int numJugador) throws JugadorException{
-		
-		if (numEscogido == numAcertar){
-			System.out.println("El jugador " + numJugador + " a acertado: " + numEscogido);
-			throw new JugadorException("Juego terminado, a ganado el jugador:" + numJugador);
-		}else{
+	public synchronized void jugar(int numEscogido, int numJugador) {
+
+		if (terminado == false){
 			System.out.println("El jugador " + numJugador + " a mostrado el: " + numEscogido);	
 		}
+		if (numEscogido == numAcertar){
+			terminado = true;
+			System.out.println("El jugaodr: " + numJugador + " a acertado!!\nFin del juego!");
+			System.out.println("Juego terminado, el número era:" + numAcertar);
+		}
 		
-		
-	}
-	
-	public void finPartida(){
-		terminado = true;
+		this.notify();
 	}
 	
 	public int generarAleatorio(){
@@ -49,10 +50,6 @@ public class Juego {
 	
 	public boolean isTerminado() {
 		return terminado;
-	}
-	
-	public void setTerminado(boolean terminado) {
-		this.terminado = terminado;
 	}
 
 }
