@@ -38,7 +38,7 @@ public class Juego {
 		if (numEscogido == numAcertar){
 			terminado = true;
 			System.out.println("El jugaodr: " + numJugador + " a acertado!!\nFin del juego!");
-			System.out.println("Juego terminado, el número era:" + numAcertar);
+			System.out.println("Juego terminado, el nÃºmero era:" + numAcertar);
 		}
 		
 		this.notify();
