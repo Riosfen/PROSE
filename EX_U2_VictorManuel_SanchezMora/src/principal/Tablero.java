@@ -28,7 +28,7 @@ public class Tablero {
 	public synchronized void jugar(int numDados, Jugador jugador) {
 
 		if (terminado == false){
-			System.out.println("Turno: " + jugador.getTurno() + " Jugador " + jugador.getName() + " esta en la casilla: " + jugador.getCasilla() + " a  sacado: " + numDados + " puntos");
+			System.out.println("Turno: " + jugador.getTurno() + " Jugador " + jugador.getName() + " esta en la casilla: " + jugador.getCasilla() + " de: " + casillas + " a  sacado: " + numDados + " puntos");
 			jugador.actualizar(numDados);
 		}
 		if (jugador.getCasilla() >= casillas){
