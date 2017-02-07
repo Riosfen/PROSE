@@ -7,7 +7,6 @@ package proyectochat.modelo;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
-import java.net.DatagramSocket;
 import java.util.ArrayList;
 
 /**
@@ -16,7 +15,7 @@ import java.util.ArrayList;
  */
 public class Clientes {
     
-    public ArrayList<Cliente> clientes;
+    public static ArrayList<Cliente> clientes;
     
     public Clientes(){
         clientes = new ArrayList<Cliente>();
@@ -29,7 +28,8 @@ public class Clientes {
         return clientes.get(pos);
     }
     
-    public void enviarMulticast(String mensaje, DatagramSocket servidorUDP) throws IOException{
+    public static void enviarMulticast(String mensaje) throws IOException{
+        
         for (int i = 0; i < clientes.size(); i++) {
             Cliente c = clientes.get(i);
             
@@ -37,7 +37,7 @@ public class Clientes {
             DatagramPacket datCliente = c.getDatagrama();
             
             DatagramPacket enviarPaket = new DatagramPacket(men, men.length, datCliente.getAddress(), datCliente.getPort());
-            servidorUDP.send(enviarPaket);
+            c.getDatagramSocket().send(enviarPaket);
         }
     }
     

@@ -42,7 +42,7 @@ public class Controlador implements ActionListener{
                 if (!texto.equals("")){
                     
                     try {
-                        clientes.enviarMulticast("Servidor: "+texto, servidor.getServidorUDP());
+                        clientes.enviarMulticast("Servidor: "+texto);
                     } catch (IOException ex) {
                         Logger.getLogger(Controlador.class.getName()).log(Level.SEVERE, null, ex);
                     }

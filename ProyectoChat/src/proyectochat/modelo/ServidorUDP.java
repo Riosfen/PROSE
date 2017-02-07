@@ -46,7 +46,7 @@ public class ServidorUDP {
 
     }
     public void cerrarServidor() throws IOException{
-        clientes.enviarMulticast("*", servidorUDP);
+        clientes.enviarMulticast("*");
         servidorUDP.close();
     }
     

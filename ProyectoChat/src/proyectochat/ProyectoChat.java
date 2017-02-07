@@ -9,8 +9,6 @@ import java.awt.Dimension;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.SocketException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JFrame;
 import proyectochat.controlador.Controlador;
 import proyectochat.modelo.Cliente;
@@ -31,11 +29,10 @@ public class ProyectoChat {
     public static void main(String[] args) throws SocketException, IOException {
         // TODO code application logic here
         
-        Clientes clientes = new Clientes();
-        ServidorUDP servidor = new ServidorUDP(clientes);
-        
         JFrame ventana = new JFrame("Servidor de mensajeria simple");
         VistaPrincipal vista = new VistaPrincipal();
+        Clientes clientes = new Clientes();
+        ServidorUDP servidor = new ServidorUDP(clientes);
         Controlador c = new Controlador(vista, clientes, servidor);
         
         vista.addControlador(c);
@@ -61,10 +58,10 @@ public class ProyectoChat {
                 DatagramPacket reciboData = new DatagramPacket (buff, buff.length);
                 servidor.getServidorUDP().receive(reciboData);
 
-                cliente = new Cliente(""+contador, reciboData, servidor);
+                cliente = new Cliente("Cliente nº"+contador, reciboData, vista);
+                clientes.getClientes().add(cliente);
                 hiloCliente = new Thread(cliente);
                 hiloCliente.start();
-                clientes.getClientes().add(cliente);
 
                 contador++;
             }

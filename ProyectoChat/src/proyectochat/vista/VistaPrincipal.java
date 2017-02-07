@@ -32,6 +32,7 @@ public class VistaPrincipal extends javax.swing.JPanel {
         if (usuarios.isEmpty()){
             jTextAreaUsuario.setText("No hay usuarios conectados");
         }else{
+            jTextAreaUsuario.setText("");
             for (Iterator<String> iterator = usuarios.iterator(); iterator.hasNext();) {
                 String next = iterator.next();
                 jTextAreaUsuario.setText(jTextAreaUsuario.getText() + "\n" + next);
