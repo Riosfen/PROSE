@@ -7,6 +7,7 @@ package proyectochat;
 
 import java.awt.Dimension;
 import javax.swing.JFrame;
+import proyectochat.controlador.Controlador;
 import proyectochat.vista.VistaPrincipal;
 
 /**
@@ -23,6 +24,9 @@ public class ProyectoChat {
         
         JFrame ventana = new JFrame("Servidor de mensajeria simple");
         VistaPrincipal vista = new VistaPrincipal();
+        Controlador c = new Controlador(vista);
+        
+        vista.addControlador(c);
         
         ventana.add(vista);
         ventana.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

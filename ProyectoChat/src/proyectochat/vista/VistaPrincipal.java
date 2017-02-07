@@ -5,6 +5,8 @@
  */
 package proyectochat.vista;
 
+import java.awt.event.ActionListener;
+
 /**
  *
  * @author samo_
@@ -18,6 +20,18 @@ public class VistaPrincipal extends javax.swing.JPanel {
         initComponents();
         
         
+    }
+    
+    public void addControlador(ActionListener e){
+        jButtonEnviar.addActionListener(e);
+        jButtonMostrarUsuario.addActionListener(e);
+        jButtonParar.addActionListener(e);
+        jButtonSalir.addActionListener(e);
+        
+        jButtonEnviar.setActionCommand("enviar");
+        jButtonMostrarUsuario.setActionCommand("mostrar");
+        jButtonParar.setActionCommand("parar");
+        jButtonSalir.setActionCommand("salir");
     }
 
     /**
