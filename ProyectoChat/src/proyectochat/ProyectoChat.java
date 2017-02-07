@@ -6,8 +6,17 @@
 package proyectochat;
 
 import java.awt.Dimension;
+import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.SocketException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JFrame;
 import proyectochat.controlador.Controlador;
+import proyectochat.modelo.Cliente;
+import proyectochat.modelo.Clientes;
+import proyectochat.modelo.Comprobacion;
+import proyectochat.modelo.ServidorUDP;
 import proyectochat.vista.VistaPrincipal;
 
 /**
@@ -19,12 +28,15 @@ public class ProyectoChat {
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args) {
+    public static void main(String[] args) throws SocketException, IOException {
         // TODO code application logic here
+        
+        Clientes clientes = new Clientes();
+        ServidorUDP servidor = new ServidorUDP(clientes);
         
         JFrame ventana = new JFrame("Servidor de mensajeria simple");
         VistaPrincipal vista = new VistaPrincipal();
-        Controlador c = new Controlador(vista);
+        Controlador c = new Controlador(vista, clientes, servidor);
         
         vista.addControlador(c);
         
@@ -33,6 +45,30 @@ public class ProyectoChat {
         ventana.setSize(800, 500);
         ventana.setVisible(true);
         ventana.setMinimumSize(new Dimension(500, 200));
+     
+        Thread hilo = new Thread(new Comprobacion(vista,servidor,c));
+        hilo.start();
+        
+        Thread hiloCliente;
+        
+        byte buff[] = new byte[1024];
+        int contador = 0;
+        Cliente cliente;
+        
+        while(true){
+        
+            if (servidor.isActive()){
+                DatagramPacket reciboData = new DatagramPacket (buff, buff.length);
+                servidor.getServidorUDP().receive(reciboData);
+
+                cliente = new Cliente(""+contador, reciboData, servidor);
+                hiloCliente = new Thread(cliente);
+                hiloCliente.start();
+                clientes.getClientes().add(cliente);
+
+                contador++;
+            }
+        }
         
     }
     

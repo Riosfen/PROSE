@@ -6,6 +6,8 @@
 package proyectochat.vista;
 
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  *
@@ -22,13 +24,43 @@ public class VistaPrincipal extends javax.swing.JPanel {
         
     }
     
+    public void setMensajeChatGeneral(String mensaje){
+        jTextAreaChatGeneral.setText(jTextAreaChatGeneral.getText() + "\n------------------------------------------\n" + mensaje);
+    }
+    public void setListaUsuarios(ArrayList<String> usuarios){
+        
+        if (usuarios.isEmpty()){
+            jTextAreaUsuario.setText("No hay usuarios conectados");
+        }else{
+            for (Iterator<String> iterator = usuarios.iterator(); iterator.hasNext();) {
+                String next = iterator.next();
+                jTextAreaUsuario.setText(jTextAreaUsuario.getText() + "\n" + next);
+            }
+        }
+    }
+    public void setBtnPararText(String texto){
+        jButtonParar.setText(texto);
+    }
+    public void setVaciarCajaTexto(){
+        jTextFieldEnviar.setText("");
+    }
+    public void setTextoEstado(String estado){
+        jLabelEstadoValor.setText(estado);
+    }
+    
+    public String getTextoEnviar(){
+        return jTextFieldEnviar.getText();
+    }
+    
     public void addControlador(ActionListener e){
         jButtonEnviar.addActionListener(e);
+        jTextFieldEnviar.addActionListener(e);
         jButtonMostrarUsuario.addActionListener(e);
         jButtonParar.addActionListener(e);
         jButtonSalir.addActionListener(e);
         
         jButtonEnviar.setActionCommand("enviar");
+        jTextFieldEnviar.setActionCommand("enviar");
         jButtonMostrarUsuario.setActionCommand("mostrar");
         jButtonParar.setActionCommand("parar");
         jButtonSalir.setActionCommand("salir");

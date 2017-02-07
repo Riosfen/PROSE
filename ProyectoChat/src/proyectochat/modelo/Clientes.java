@@ -18,7 +18,9 @@ public class Clientes {
     
     public ArrayList<Cliente> clientes;
     
-    public Clientes(){}
+    public Clientes(){
+        clientes = new ArrayList<Cliente>();
+    }
 
     public ArrayList<Cliente> getClientes() {
         return clientes;
@@ -31,8 +33,7 @@ public class Clientes {
         for (int i = 0; i < clientes.size(); i++) {
             Cliente c = clientes.get(i);
             
-            byte men[] = new byte[1024];
-            men = mensaje.getBytes();
+            byte men[] = mensaje.getBytes();
             DatagramPacket datCliente = c.getDatagrama();
             
             DatagramPacket enviarPaket = new DatagramPacket(men, men.length, datCliente.getAddress(), datCliente.getPort());
