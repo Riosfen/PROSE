@@ -58,6 +58,11 @@ public class ProyectoChat {
                 DatagramPacket reciboData = new DatagramPacket (buff, buff.length);
                 servidor.getServidorUDP().receive(reciboData);
 
+                vista.setMensajeChatGeneral("Sistema: Nuevo usuario conectado:\n"
+                        + "Puerto: " + reciboData.getPort() 
+                        + "\nIP: " + reciboData.getAddress());
+                vista.setVaciarCajaTexto();
+                
                 cliente = new Cliente("Cliente nº"+contador, reciboData, vista);
                 clientes.getClientes().add(cliente);
                 hiloCliente = new Thread(cliente);
