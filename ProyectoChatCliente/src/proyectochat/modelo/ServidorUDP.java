@@ -41,7 +41,7 @@ public class ServidorUDP {
         try {
             byte[] buf = "*".getBytes();
             
-            DatagramPacket envio = new DatagramPacket(buf, buf.length, InetAddress.getLocalHost(), puertoRemoto);
+            DatagramPacket envio = new DatagramPacket(buf, buf.length, servidorUDP.getInetAddress().getLocalHost(), puertoRemoto);
             servidorUDP.send(envio);
             
         } catch (IOException ex) {
@@ -64,8 +64,7 @@ public class ServidorUDP {
     public void setPuerto(int puerto){
         
         try {
-            int port =  servidorUDP.getPort();
-            servidorUDP = new DatagramSocket(port);
+            servidorUDP = new DatagramSocket(puerto);
         
         } catch (SocketException ex) {
             Logger.getLogger(ServidorUDP.class.getName()).log(Level.SEVERE, null, ex);
