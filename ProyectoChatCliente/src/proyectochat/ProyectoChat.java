@@ -9,6 +9,7 @@ import java.awt.Dimension;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
+import java.net.SocketTimeoutException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFrame;
@@ -48,20 +49,33 @@ public class ProyectoChat {
         
         
         byte buff[] = new byte[1024];
+        boolean conectado = false;
         
-        try {
-        
-            DatagramPacket envioData = new DatagramPacket (buff, buff.length, InetAddress.getLocalHost(), servidor.getPuerto());
-            servidor.getServidorUDP().send(envioData);
+        while(!conectado){
+            try {
 
-            DatagramPacket reciboData = new DatagramPacket (buff, buff.length);
-            servidor.getServidorUDP().receive(reciboData);
-            servidor.setPuerto(reciboData.getPort());
+                DatagramPacket envioData = new DatagramPacket (buff, buff.length, InetAddress.getLocalHost(), servidor.getPuerto());
+                servidor.getServidorUDP().send(envioData);
 
-        } catch (IOException ex) {
-            Logger.getLogger(ProyectoChat.class.getName()).log(Level.SEVERE, null, ex);
+                DatagramPacket reciboData = new DatagramPacket (buff, buff.length);
+                servidor.getServidorUDP().setSoTimeout(10000);
+                servidor.getServidorUDP().receive(reciboData);
+                
+                servidor.setPuerto(reciboData.getPort());
+                
+                vista.setMensajeChatGeneral("Conectado correctamente con el servidor:\n"
+                        + "Puerto: " + reciboData.getPort() + 
+                        "\nIP: " + reciboData.getAddress());
+                
+                servidor.getServidorUDP().setSoTimeout(Integer.MAX_VALUE);
+                conectado = true;
+
+            } catch (SocketTimeoutException e) {
+                vista.setMensajeChatGeneral("No se ha conseguido conectar con el servidor.\nIntentandolo de nuevo...");
+            }catch (IOException ex) {
+                Logger.getLogger(ProyectoChat.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
-        
         
         while(true){
         

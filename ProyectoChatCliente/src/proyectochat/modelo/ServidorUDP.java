@@ -62,7 +62,17 @@ public class ServidorUDP {
     }
     
     public void setPuerto(int puerto){
+        
+        try {
+            int port =  servidorUDP.getPort();
+            servidorUDP = new DatagramSocket(port);
+        
+        } catch (SocketException ex) {
+            Logger.getLogger(ServidorUDP.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
         this.puertoRemoto = puerto;
+        
     }
     
 }
