@@ -8,6 +8,7 @@ package proyectochat.modelo;
 import java.io.IOException;
 import java.net.DatagramSocket;
 import java.net.SocketException;
+import proyectochat.modelo.*;
 
 /**
  *
@@ -48,6 +49,7 @@ public class ServidorUDP {
     public void cerrarServidor() throws IOException{
         clientes.enviarMulticast("*");
         servidorUDP.close();
+        
     }
     
     public Clientes getClientes(){

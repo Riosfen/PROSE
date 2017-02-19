@@ -36,6 +36,7 @@ public class ProyectoChat {
         Controlador c = new Controlador(vista, clientes, servidor);
         
         vista.addControlador(c);
+        ventana.addWindowListener(c);
         
         ventana.add(vista);
         ventana.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
