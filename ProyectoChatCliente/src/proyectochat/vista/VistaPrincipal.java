@@ -29,22 +29,25 @@ public class VistaPrincipal extends javax.swing.JPanel {
     public void setVaciarCajaTexto(){
         jTextFieldEnviar.setText("");
     }
-    public void setTextoEstado(String estado){
-        jLabelEstadoValor.setText(estado);
-    }
     
     public String getTextoEnviar(){
         return jTextFieldEnviar.getText();
     }
     
     public void addControlador(ActionListener e){
+        jButtonConectar.addActionListener(e);
+        jButtonDesconectar.addActionListener(e);
+        jButtonUsuarios.addActionListener(e);
         jButtonEnviar.addActionListener(e);
         jTextFieldEnviar.addActionListener(e);
-        jButtonSalir.addActionListener(e);
+        jButtonNombre.addActionListener(e);
         
+        jButtonNombre.setActionCommand("nombre");
+        jButtonConectar.setActionCommand("conectar");
+        jButtonDesconectar.setActionCommand("desconectar");
+        jButtonUsuarios.setActionCommand("usuarios");
         jButtonEnviar.setActionCommand("enviar");
         jTextFieldEnviar.setActionCommand("enviar");
-        jButtonSalir.setActionCommand("salir");
     }
 
     /**
@@ -59,14 +62,14 @@ public class VistaPrincipal extends javax.swing.JPanel {
         jScrollPaneChatGeneral = new javax.swing.JScrollPane();
         jTextAreaChatGeneral = new javax.swing.JTextArea();
         jPanelSurTools = new javax.swing.JPanel();
-        jPanelEstado = new javax.swing.JPanel();
-        jLabelEstado = new javax.swing.JLabel();
-        jLabelEstadoValor = new javax.swing.JLabel();
-        jPanelSalir = new javax.swing.JPanel();
-        jButtonSalir = new javax.swing.JButton();
         jPanelEnviarMensaje = new javax.swing.JPanel();
         jTextFieldEnviar = new javax.swing.JTextField();
         jButtonEnviar = new javax.swing.JButton();
+        jToolBarHerramientas = new javax.swing.JToolBar();
+        jButtonConectar = new javax.swing.JButton();
+        jButtonDesconectar = new javax.swing.JButton();
+        jButtonUsuarios = new javax.swing.JButton();
+        jButtonNombre = new javax.swing.JButton();
 
         setLayout(new java.awt.BorderLayout());
 
@@ -79,17 +82,6 @@ public class VistaPrincipal extends javax.swing.JPanel {
 
         jPanelSurTools.setLayout(new java.awt.BorderLayout());
 
-        jLabelEstado.setText("Estado: ");
-        jPanelEstado.add(jLabelEstado);
-        jPanelEstado.add(jLabelEstadoValor);
-
-        jPanelSurTools.add(jPanelEstado, java.awt.BorderLayout.WEST);
-
-        jButtonSalir.setText("Salir");
-        jPanelSalir.add(jButtonSalir);
-
-        jPanelSurTools.add(jPanelSalir, java.awt.BorderLayout.EAST);
-
         jPanelEnviarMensaje.setLayout(new java.awt.BorderLayout());
         jPanelEnviarMensaje.add(jTextFieldEnviar, java.awt.BorderLayout.CENTER);
 
@@ -99,20 +91,42 @@ public class VistaPrincipal extends javax.swing.JPanel {
         jPanelSurTools.add(jPanelEnviarMensaje, java.awt.BorderLayout.NORTH);
 
         add(jPanelSurTools, java.awt.BorderLayout.PAGE_END);
+
+        jToolBarHerramientas.setRollover(true);
+
+        jButtonConectar.setText("Conectar");
+        jButtonConectar.setFocusable(false);
+        jButtonConectar.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jButtonConectar.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jToolBarHerramientas.add(jButtonConectar);
+
+        jButtonDesconectar.setText("Desconectar");
+        jToolBarHerramientas.add(jButtonDesconectar);
+
+        jButtonUsuarios.setText("Usuarios");
+        jToolBarHerramientas.add(jButtonUsuarios);
+
+        jButtonNombre.setText("Cambiar nombre");
+        jButtonNombre.setFocusable(false);
+        jButtonNombre.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jButtonNombre.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jToolBarHerramientas.add(jButtonNombre);
+
+        add(jToolBarHerramientas, java.awt.BorderLayout.PAGE_START);
     }// </editor-fold>//GEN-END:initComponents
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton jButtonConectar;
+    private javax.swing.JButton jButtonDesconectar;
     private javax.swing.JButton jButtonEnviar;
-    private javax.swing.JButton jButtonSalir;
-    private javax.swing.JLabel jLabelEstado;
-    private javax.swing.JLabel jLabelEstadoValor;
+    private javax.swing.JButton jButtonNombre;
+    private javax.swing.JButton jButtonUsuarios;
     private javax.swing.JPanel jPanelEnviarMensaje;
-    private javax.swing.JPanel jPanelEstado;
-    private javax.swing.JPanel jPanelSalir;
     private javax.swing.JPanel jPanelSurTools;
     private javax.swing.JScrollPane jScrollPaneChatGeneral;
     private javax.swing.JTextArea jTextAreaChatGeneral;
     private javax.swing.JTextField jTextFieldEnviar;
+    private javax.swing.JToolBar jToolBarHerramientas;
     // End of variables declaration//GEN-END:variables
 }

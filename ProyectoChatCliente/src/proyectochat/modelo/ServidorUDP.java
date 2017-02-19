@@ -10,8 +10,10 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
+import java.net.UnknownHostException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import proyectochat.vista.VistaPrincipal;
 
 /**
  *
@@ -23,8 +25,18 @@ public class ServidorUDP {
     
     private int puertoRemoto;
     private DatagramSocket servidorUDP;
+    private boolean conectado;
+    private VistaPrincipal vista;
+    private InetAddress direccion;
+    private String nombre;
     
-    public ServidorUDP(){
+    public ServidorUDP(VistaPrincipal vista){
+        try {
+            this.direccion = InetAddress.getLocalHost();
+        } catch (UnknownHostException ex) {
+            Logger.getLogger(ServidorUDP.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        this.vista = vista;
         this.puertoRemoto = PUERTO_REMOTO;
         
         try {
@@ -35,22 +47,12 @@ public class ServidorUDP {
             Logger.getLogger(ServidorUDP.class.getName()).log(Level.SEVERE, null, ex);
         }
         
-    }
-    
-    public void cerrarServidor(){
-        try {
-            byte[] buf = "*".getBytes();
-            
-            DatagramPacket envio = new DatagramPacket(buf, buf.length, servidorUDP.getInetAddress().getLocalHost(), puertoRemoto);
-            servidorUDP.send(envio);
-            
-        } catch (IOException ex) {
-            Logger.getLogger(ServidorUDP.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        this.conectado = false;
         
-        servidorUDP.close();
     }
     
+    
+    // inicio getter and setter
     public boolean isActive(){
         return !servidorUDP.isClosed();
     }
@@ -60,18 +62,57 @@ public class ServidorUDP {
     public DatagramSocket getServidorUDP(){
         return servidorUDP;
     }
+    public InetAddress getDireccion() {
+        return direccion;
+    }
+    public String getNombre() {
+        return nombre;
+    }
     
     public void setPuerto(int puerto){
         
-        try {
-            servidorUDP = new DatagramSocket(puerto);
+        servidorUDP.disconnect();
         
-        } catch (SocketException ex) {
-            Logger.getLogger(ServidorUDP.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        
+        servidorUDP.connect(direccion, puerto);
         this.puertoRemoto = puerto;
         
     }
+    public void setDireccion(InetAddress direccion){
+        
+        servidorUDP.disconnect();
+        
+        servidorUDP.connect(direccion, puertoRemoto);
+        this.direccion = direccion;
+        
+    }
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+    // fin getter and setter
+    
+    
+    // inicio metodos adicionales
+    public void cerrarServidor(){
+        try {
+            byte[] buf = Comandos.comando[Comandos.SALIR].getBytes();
+            
+            DatagramPacket envio = new DatagramPacket(buf, buf.length, direccion, puertoRemoto);
+            servidorUDP.send(envio);
+            
+        } catch (IOException ex) {
+            Logger.getLogger(ServidorUDP.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        servidorUDP.close();
+    }
+    public void conectarServidor() {
+        servidorUDP.connect(direccion, puertoRemoto);
+    }
+    public void desconectarServidor() {
+        servidorUDP.disconnect();
+    }
+    
+    // fin metodos adicionales
+
     
 }
