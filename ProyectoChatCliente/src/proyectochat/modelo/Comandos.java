@@ -11,6 +11,26 @@ package proyectochat.modelo;
  */
 public class Comandos {
     
+    public enum acciones{
+        SALIR,
+        LISTA_CLIENTES,
+        AYUDA,
+        CONECTAR,
+        ANIADIR_CLIENTE,
+        SILENCIAR_CLIENTE,
+        ELIMINAR_CLIENTE,
+        CANAL_PRIVADO,
+        CANAL_GRUPAL,
+        ANIADIR_PERMISOS,
+        ELIMINAR_PERMISOS,
+        ECHAR_CLIENTE,
+        BANEAR_CLIENTE,
+        LIMPIAR_CHAT,
+        TIEMPO_DE_ESPERA,
+        SILENCIAR_CANAL,
+        CAMBIAR_NOMBRE_CLIENTE,
+    };
+    
     public static final int SALIR = 0;
     public static final int LISTA_CLIENTES = 1;
     public static final int AYUDA = 2;
@@ -27,6 +47,7 @@ public class Comandos {
     public static final int LIMPIAR_CHAT = 13;
     public static final int TIEMPO_DE_ESPERA = 14;
     public static final int SILENCIAR_CANAL = 15;
+    public static final int CAMBIAR_NOMBRE_CLIENTE = 16;
     
     public static final String[] comando = new String[]{
         "/exit",
@@ -44,7 +65,8 @@ public class Comandos {
         "/ban-client",
         "/clean",
         "/time-lapse",
-        "/mute-channel"
+        "/mute-channel",
+        "/nickname"
     };
     
 }

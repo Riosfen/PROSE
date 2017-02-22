@@ -5,6 +5,8 @@
  */
 package proyectochat.vista;
 
+import java.awt.Dimension;
+import java.awt.Point;
 import java.awt.event.ActionListener;
 
 /**
@@ -18,12 +20,27 @@ public class VistaPrincipal extends javax.swing.JPanel {
      */
     public VistaPrincipal() {
         initComponents();
+        jLabelNumCliente.setText("0");
+        jButtonDesconectar.setEnabled(false);
+        jButtonUsuarios.setEnabled(false);
         
-        
+    }
+    
+    public void setVaciarChatGeneral(){
+        jTextAreaChatGeneral.setText("");
+    }
+    
+    public void setUnableDesconectar(boolean b){
+        jButtonDesconectar.setEnabled(b);
+        jButtonUsuarios.setEnabled(b);
+        jLabelNumCliente.setText("0");
     }
     
     public void setMensajeChatGeneral(String mensaje){
         jTextAreaChatGeneral.setText(jTextAreaChatGeneral.getText() + "\n------------------------------------------\n" + mensaje);
+        Dimension tamanhoTextArea = jTextAreaChatGeneral.getSize();
+        Point p = new Point(0, tamanhoTextArea.height);
+        jScrollPaneChatGeneral.getViewport().setViewPosition(p);
     }
     
     public void setVaciarCajaTexto(){
@@ -32,6 +49,14 @@ public class VistaPrincipal extends javax.swing.JPanel {
     
     public String getTextoEnviar(){
         return jTextFieldEnviar.getText();
+    }
+    
+    public void setNumeroClientes(int numero){
+        jLabelNumCliente.setText(String.valueOf(numero));
+    }
+    
+    public void setNombreUsuario(String nombre){
+        jLabelNombreUsuario.setText(nombre);
     }
     
     public void addControlador(ActionListener e){
@@ -65,11 +90,14 @@ public class VistaPrincipal extends javax.swing.JPanel {
         jPanelEnviarMensaje = new javax.swing.JPanel();
         jTextFieldEnviar = new javax.swing.JTextField();
         jButtonEnviar = new javax.swing.JButton();
+        jLabelNombreUsuario = new javax.swing.JLabel();
         jToolBarHerramientas = new javax.swing.JToolBar();
         jButtonConectar = new javax.swing.JButton();
         jButtonDesconectar = new javax.swing.JButton();
         jButtonUsuarios = new javax.swing.JButton();
         jButtonNombre = new javax.swing.JButton();
+        jLabelCliente = new javax.swing.JLabel();
+        jLabelNumCliente = new javax.swing.JLabel();
 
         setLayout(new java.awt.BorderLayout());
 
@@ -87,6 +115,9 @@ public class VistaPrincipal extends javax.swing.JPanel {
 
         jButtonEnviar.setText("Enviar");
         jPanelEnviarMensaje.add(jButtonEnviar, java.awt.BorderLayout.LINE_END);
+
+        jLabelNombreUsuario.setText("Usuario: ");
+        jPanelEnviarMensaje.add(jLabelNombreUsuario, java.awt.BorderLayout.LINE_START);
 
         jPanelSurTools.add(jPanelEnviarMensaje, java.awt.BorderLayout.NORTH);
 
@@ -112,6 +143,10 @@ public class VistaPrincipal extends javax.swing.JPanel {
         jButtonNombre.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         jToolBarHerramientas.add(jButtonNombre);
 
+        jLabelCliente.setText("Total clientes: ");
+        jToolBarHerramientas.add(jLabelCliente);
+        jToolBarHerramientas.add(jLabelNumCliente);
+
         add(jToolBarHerramientas, java.awt.BorderLayout.PAGE_START);
     }// </editor-fold>//GEN-END:initComponents
 
@@ -122,6 +157,9 @@ public class VistaPrincipal extends javax.swing.JPanel {
     private javax.swing.JButton jButtonEnviar;
     private javax.swing.JButton jButtonNombre;
     private javax.swing.JButton jButtonUsuarios;
+    private javax.swing.JLabel jLabelCliente;
+    private javax.swing.JLabel jLabelNombreUsuario;
+    private javax.swing.JLabel jLabelNumCliente;
     private javax.swing.JPanel jPanelEnviarMensaje;
     private javax.swing.JPanel jPanelSurTools;
     private javax.swing.JScrollPane jScrollPaneChatGeneral;

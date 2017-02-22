@@ -5,14 +5,13 @@
  */
 package proyectochat.modelo;
 
-import java.io.IOException;
-import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import proyectochat.opcionservidor.Escuchar;
 import proyectochat.vista.VistaPrincipal;
 
 /**
@@ -25,7 +24,6 @@ public class ServidorUDP {
     
     private int puertoRemoto;
     private DatagramSocket servidorUDP;
-    private boolean conectado;
     private VistaPrincipal vista;
     private InetAddress direccion;
     private String nombre;
@@ -46,8 +44,6 @@ public class ServidorUDP {
         } catch (SocketException ex) {
             Logger.getLogger(ServidorUDP.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
-        this.conectado = false;
         
     }
     
@@ -87,32 +83,12 @@ public class ServidorUDP {
     }
     public void setNombre(String nombre) {
         this.nombre = nombre;
+        vista.setNombreUsuario(nombre + ": ");
+        
+        Thread th = new Escuchar(vista, this);
+        th.start();
+        
     }
     // fin getter and setter
-    
-    
-    // inicio metodos adicionales
-    public void cerrarServidor(){
-        try {
-            byte[] buf = Comandos.comando[Comandos.SALIR].getBytes();
-            
-            DatagramPacket envio = new DatagramPacket(buf, buf.length, direccion, puertoRemoto);
-            servidorUDP.send(envio);
-            
-        } catch (IOException ex) {
-            Logger.getLogger(ServidorUDP.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        
-        servidorUDP.close();
-    }
-    public void conectarServidor() {
-        servidorUDP.connect(direccion, puertoRemoto);
-    }
-    public void desconectarServidor() {
-        servidorUDP.disconnect();
-    }
-    
-    // fin metodos adicionales
-
     
 }
