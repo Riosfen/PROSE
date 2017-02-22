@@ -5,9 +5,13 @@
  */
 package proyectochat.modelo;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.net.DatagramPacket;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -15,7 +19,7 @@ import java.util.ArrayList;
  */
 public class Clientes {
     
-    public static ArrayList<Cliente> clientes;
+    private ArrayList<Cliente> clientes;
     
     public Clientes(){
         clientes = new ArrayList<Cliente>();
@@ -27,8 +31,43 @@ public class Clientes {
     public Cliente getCliente(int pos){
         return clientes.get(pos);
     }
+    public void addCliente(Cliente cliente){
+        ObjectOutputStream out = null;
+        try {
+            
+            clientes.add(cliente);
+            
+            //TODO aqui se manda junto con la lista de clientes un array de string con los nombres de los clientes
+            ByteArrayOutputStream contentStream = new ByteArrayOutputStream();
+            out = new ObjectOutputStream(contentStream);
+            out.writeObject(getNickClientes());
+            out.flush();
+            out.close();
+            
+            enviarMulticast(Comandos.comando[Comandos.LISTA_CLIENTES]);
+            
+        } catch (IOException ex) {
+            Logger.getLogger(Clientes.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try {
+                out.close();
+            } catch (IOException ex) {
+                Logger.getLogger(Clientes.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        
+    }
+    public String[] getNickClientes(){
+        String[] listaClientes = new String[clientes.size()];
+        
+        for (int i = 0; 0 < clientes.size() ; i++) {
+            listaClientes[i] = clientes.get(i).getNombre();
+        }
+        
+        return listaClientes;
+    }
     
-    public static void enviarMulticast(String mensaje) throws IOException{
+    public void enviarMulticast(String mensaje){
         
         for (int i = 0; i < clientes.size(); i++) {
             Cliente c = clientes.get(i);
@@ -37,8 +76,17 @@ public class Clientes {
             DatagramPacket datCliente = c.getDatagrama();
             
             DatagramPacket enviarPaket = new DatagramPacket(men, men.length, datCliente.getAddress(), datCliente.getPort());
-            c.getDatagramSocket().send(enviarPaket);
+            try {
+                c.getServer().send(enviarPaket);
+            } catch (IOException ex) {
+                Logger.getLogger(Clientes.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
+    }
+
+    public void eliminarCliente(Cliente cliente) {
+        clientes.remove(cliente);
+        enviarMulticast(Comandos.comando[Comandos.LISTA_CLIENTES]);
     }
     
 }

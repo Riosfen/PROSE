@@ -7,7 +7,7 @@ package proyectochat.vista;
 
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import java.util.Iterator;
+import proyectochat.modelo.Clientes;
 
 /**
  *
@@ -15,6 +15,8 @@ import java.util.Iterator;
  */
 public class VistaPrincipal extends javax.swing.JPanel {
 
+    private Clientes clientes;
+    
     /**
      * Creates new form VistaPrincipal
      */
@@ -30,14 +32,17 @@ public class VistaPrincipal extends javax.swing.JPanel {
     public void setListaUsuarios(ArrayList<String> usuarios){
         
         if (usuarios.isEmpty()){
-            jTextAreaUsuario.setText("No hay usuarios conectados");
+            jListUsuarios.setListData(new String[]{"No hay usuarios conectados"});
         }else{
-            jTextAreaUsuario.setText("");
-            for (Iterator<String> iterator = usuarios.iterator(); iterator.hasNext();) {
-                String next = iterator.next();
-                jTextAreaUsuario.setText(jTextAreaUsuario.getText() + "\n" + next);
-            }
+            jListUsuarios.setListData(clientes.getNickClientes());
+            
         }
+    }
+    public void setVaciarChatGeneral(){
+        jTextAreaChatGeneral.setText("");
+    }
+    public void setUnableDesconectar(boolean b){
+        jButtonParar.setEnabled(b);
     }
     public void setBtnPararText(String texto){
         jButtonParar.setText(texto);
@@ -45,8 +50,11 @@ public class VistaPrincipal extends javax.swing.JPanel {
     public void setVaciarCajaTexto(){
         jTextFieldEnviar.setText("");
     }
-    public void setTextoEstado(String estado){
-        jLabelEstadoValor.setText(estado);
+    public void setDireccion(String direccion){
+        jLabelDireccion.setText(direccion);
+    }
+    public void setPuerto(int puerto){
+        jLabelPuerto.setText(String.valueOf(puerto));
     }
     
     public String getTextoEnviar(){
@@ -79,9 +87,6 @@ public class VistaPrincipal extends javax.swing.JPanel {
         jScrollPaneChatGeneral = new javax.swing.JScrollPane();
         jTextAreaChatGeneral = new javax.swing.JTextArea();
         jPanelSurTools = new javax.swing.JPanel();
-        jPanelEstado = new javax.swing.JPanel();
-        jLabelEstado = new javax.swing.JLabel();
-        jLabelEstadoValor = new javax.swing.JLabel();
         jPanelOpciones = new javax.swing.JPanel();
         jButtonParar = new javax.swing.JButton();
         jButtonMostrarUsuario = new javax.swing.JButton();
@@ -93,7 +98,12 @@ public class VistaPrincipal extends javax.swing.JPanel {
         jPanelUsuariosConectados = new javax.swing.JPanel();
         jLabelUsuarioConectado = new javax.swing.JLabel();
         jScrollPaneUsuarios = new javax.swing.JScrollPane();
-        jTextAreaUsuario = new javax.swing.JTextArea();
+        jListUsuarios = new javax.swing.JList<>();
+        jPanelInformacion = new javax.swing.JPanel();
+        jLabelDireccion = new javax.swing.JLabel();
+        jLabelValorDireccion = new javax.swing.JLabel();
+        jLabelPuerto = new javax.swing.JLabel();
+        jLabelValorPuerto = new javax.swing.JLabel();
 
         setLayout(new java.awt.BorderLayout());
 
@@ -106,12 +116,7 @@ public class VistaPrincipal extends javax.swing.JPanel {
 
         jPanelSurTools.setLayout(new java.awt.BorderLayout());
 
-        jLabelEstado.setText("Estado: ");
-        jPanelEstado.add(jLabelEstado);
-        jPanelEstado.add(jLabelEstadoValor);
-
-        jPanelSurTools.add(jPanelEstado, java.awt.BorderLayout.WEST);
-
+        jButtonParar.setText("Desconectar Clientes");
         jPanelOpciones.add(jButtonParar);
 
         jButtonMostrarUsuario.setText("Mostrar Usuarios");
@@ -140,14 +145,23 @@ public class VistaPrincipal extends javax.swing.JPanel {
         jLabelUsuarioConectado.setText("Usuarios conectados: ");
         jPanelUsuariosConectados.add(jLabelUsuarioConectado, java.awt.BorderLayout.NORTH);
 
-        jTextAreaUsuario.setColumns(20);
-        jTextAreaUsuario.setRows(5);
-        jTextAreaUsuario.setEnabled(false);
-        jScrollPaneUsuarios.setViewportView(jTextAreaUsuario);
+        jScrollPaneUsuarios.setViewportView(jListUsuarios);
 
         jPanelUsuariosConectados.add(jScrollPaneUsuarios, java.awt.BorderLayout.CENTER);
 
         add(jPanelUsuariosConectados, java.awt.BorderLayout.LINE_END);
+
+        jPanelInformacion.setLayout(new java.awt.GridLayout(1, 0));
+
+        jLabelDireccion.setText("Dirección: ");
+        jPanelInformacion.add(jLabelDireccion);
+        jPanelInformacion.add(jLabelValorDireccion);
+
+        jLabelPuerto.setText("Puerto: ");
+        jPanelInformacion.add(jLabelPuerto);
+        jPanelInformacion.add(jLabelValorPuerto);
+
+        add(jPanelInformacion, java.awt.BorderLayout.PAGE_START);
     }// </editor-fold>//GEN-END:initComponents
 
 
@@ -156,11 +170,14 @@ public class VistaPrincipal extends javax.swing.JPanel {
     private javax.swing.JButton jButtonMostrarUsuario;
     private javax.swing.JButton jButtonParar;
     private javax.swing.JButton jButtonSalir;
-    private javax.swing.JLabel jLabelEstado;
-    private javax.swing.JLabel jLabelEstadoValor;
+    private javax.swing.JLabel jLabelDireccion;
+    private javax.swing.JLabel jLabelPuerto;
     private javax.swing.JLabel jLabelUsuarioConectado;
+    private javax.swing.JLabel jLabelValorDireccion;
+    private javax.swing.JLabel jLabelValorPuerto;
+    private javax.swing.JList<String> jListUsuarios;
     private javax.swing.JPanel jPanelEnviarMensaje;
-    private javax.swing.JPanel jPanelEstado;
+    private javax.swing.JPanel jPanelInformacion;
     private javax.swing.JPanel jPanelOpciones;
     private javax.swing.JPanel jPanelSalir;
     private javax.swing.JPanel jPanelSurTools;
@@ -168,7 +185,6 @@ public class VistaPrincipal extends javax.swing.JPanel {
     private javax.swing.JScrollPane jScrollPaneChatGeneral;
     private javax.swing.JScrollPane jScrollPaneUsuarios;
     private javax.swing.JTextArea jTextAreaChatGeneral;
-    private javax.swing.JTextArea jTextAreaUsuario;
     private javax.swing.JTextField jTextFieldEnviar;
     // End of variables declaration//GEN-END:variables
 }

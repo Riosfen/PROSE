@@ -7,13 +7,11 @@ package proyectochat;
 
 import java.awt.Dimension;
 import java.io.IOException;
-import java.net.DatagramPacket;
 import java.net.SocketException;
 import javax.swing.JFrame;
 import proyectochat.controlador.Controlador;
-import proyectochat.modelo.Cliente;
 import proyectochat.modelo.Clientes;
-import proyectochat.modelo.Comprobacion;
+import proyectochat.opcionservidor.Escuchar;
 import proyectochat.modelo.ServidorUDP;
 import proyectochat.vista.VistaPrincipal;
 
@@ -32,7 +30,7 @@ public class ProyectoChat {
         JFrame ventana = new JFrame("Servidor de mensajeria simple");
         VistaPrincipal vista = new VistaPrincipal();
         Clientes clientes = new Clientes();
-        ServidorUDP servidor = new ServidorUDP(clientes);
+        ServidorUDP servidor = new ServidorUDP(vista);
         Controlador c = new Controlador(vista, clientes, servidor);
         
         vista.addControlador(c);
@@ -43,35 +41,9 @@ public class ProyectoChat {
         ventana.setSize(800, 500);
         ventana.setVisible(true);
         ventana.setMinimumSize(new Dimension(500, 200));
-     
-        Thread hilo = new Thread(new Comprobacion(vista,servidor,c));
-        hilo.start();
         
-        Thread hiloCliente;
-        
-        byte buff[] = new byte[1024];
-        int contador = 0;
-        Cliente cliente;
-        
-        while(true){
-        
-            if (servidor.isActive()){
-                DatagramPacket reciboData = new DatagramPacket (buff, buff.length);
-                servidor.getServidorUDP().receive(reciboData);
-
-                vista.setMensajeChatGeneral("Sistema: Nuevo usuario conectado:\n"
-                        + "Puerto: " + reciboData.getPort() 
-                        + "\nIP: " + reciboData.getAddress());
-                vista.setVaciarCajaTexto();
-                
-                cliente = new Cliente("Cliente nº"+contador, reciboData, vista);
-                clientes.getClientes().add(cliente);
-                hiloCliente = new Thread(cliente);
-                hiloCliente.start();
-
-                contador++;
-            }
-        }
+        Thread th = new Escuchar(vista, servidor, clientes);
+        th.start();
         
     }
     

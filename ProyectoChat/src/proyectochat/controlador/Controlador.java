@@ -16,6 +16,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import proyectochat.modelo.Cliente;
 import proyectochat.modelo.Clientes;
+import proyectochat.modelo.Comandos;
 import proyectochat.modelo.ServidorUDP;
 import proyectochat.vista.VistaPrincipal;
 
@@ -39,7 +40,7 @@ public class Controlador extends WindowAdapter implements ActionListener{
     @Override
     public void windowClosed(WindowEvent e) {
         try {
-            servidor.cerrarServidor();
+            servidor.cerrarServidor();// arreglar esto
         } catch (IOException ex) {
             Logger.getLogger(Controlador.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -54,45 +55,25 @@ public class Controlador extends WindowAdapter implements ActionListener{
                 String texto = vista.getTextoEnviar().trim();
                 if (!texto.equals("")){
                     
-                    try {
-                        clientes.enviarMulticast("Servidor: "+texto);
-                    } catch (IOException ex) {
-                        Logger.getLogger(Controlador.class.getName()).log(Level.SEVERE, null, ex);
-                    }
+                    clientes.enviarMulticast("Servidor: "+texto);
                     
-                    vista.setMensajeChatGeneral("Tú: " + texto);
+                    vista.setMensajeChatGeneral("Servidor: " + texto);
                     vista.setVaciarCajaTexto();
                 }
                 break;
                 
             case "mostrar":
                 mostrarUsuarios();
-                    
                 break;
                 
             case "parar":
-                
-                if (servidor.isActive()){
-                try {
-                    servidor.cerrarServidor();
-                } catch (IOException ex) {
-                    Logger.getLogger(Controlador.class.getName()).log(Level.SEVERE, null, ex);
-                }
-                    vista.setBtnPararText("Iniciar");
-                }else{
-                    servidor.iniciarServidor();
-                    vista.setBtnPararText("Parar");
-                }
+                clientes.enviarMulticast(Comandos.comando[Comandos.DESCONECTAR]);
                 
                 break;
                 
             case "salir":
-                try {
-                    servidor.cerrarServidor();
-                } catch (IOException ex) {
-                    Logger.getLogger(Controlador.class.getName()).log(Level.SEVERE, null, ex);
-                }
-                
+                clientes.enviarMulticast(Comandos.comando[Comandos.DESCONECTAR]);
+                servidor.getServidorUDP().close();
                 System.exit(0);
                 break;
         }
