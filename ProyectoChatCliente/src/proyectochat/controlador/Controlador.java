@@ -10,6 +10,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import javax.swing.JOptionPane;
+import proyectochat.modelo.Comandos;
 import proyectochat.opcionservidor.Conectar;
 import proyectochat.modelo.ServidorUDP;
 import proyectochat.opcionservidor.Desconectar;
@@ -68,11 +69,11 @@ public class Controlador extends WindowAdapter implements ActionListener{
                 break;
                 
             case "nombre":
-                    
-                servidor.setNombre(JOptionPane.showInputDialog(vista, "Nombre de usuario: ", "Cambiar nombre", JOptionPane.INFORMATION_MESSAGE));
-                
-                
-                
+                String resultado = JOptionPane.showInputDialog(vista, "Nombre de usuario: ", "Cambiar nombre", JOptionPane.INFORMATION_MESSAGE);
+                if (resultado != null){
+                    th = new EnviarMensaje(vista, servidor, Comandos.comando[Comandos.CAMBIAR_NOMBRE_CLIENTE] + " " + resultado);
+                    th.start();
+                }
                 
                 break;
         }

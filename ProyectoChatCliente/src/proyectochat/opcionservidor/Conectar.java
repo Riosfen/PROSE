@@ -1,14 +1,16 @@
+package proyectochat.opcionservidor;
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package proyectochat.opcionservidor;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.StringTokenizer;
 import javax.swing.JOptionPane;
+import proyectochat.modelo.Comandos;
 import proyectochat.modelo.ServidorUDP;
 import proyectochat.vista.VistaPrincipal;
 
@@ -29,16 +31,13 @@ public class Conectar extends Thread{
         @Override
         public void run() {
             
-            boolean errorConex = false;
-            
             if (servidor.isActive()){servidor.getServidorUDP().disconnect();}
                 
             String resul = JOptionPane.showInputDialog(vista, "Dirección: ", "Conexión", JOptionPane.INFORMATION_MESSAGE);
             
             if (resul != null){
+            
                 resul = resul.trim();
-
-                vista.setMensajeChatGeneral("Intentando establecer conexión...");
 
                 if (resul.equals("")){
                     vista.setMensajeChatGeneral("Error, no se ha introducido una dirección/puerto correctos.\n"
@@ -50,6 +49,8 @@ public class Conectar extends Thread{
 
                     String direccion = "";
                     int puerto = servidor.getPuerto();
+                    
+                    vista.setMensajeChatGeneral("Intentando establecer conexión...");
 
                     if (resul.contains(":") && resul.charAt(0) != ':' && resul.charAt(resul.length()-1) != ':'){
                         try {
@@ -60,8 +61,11 @@ public class Conectar extends Thread{
 
                             servidor.setDireccion(InetAddress.getByName(direccion));
                             servidor.setPuerto(puerto);
-
-                            vista.setUnableDesconectar(true);
+                        
+                            String buff = Comandos.comando[Comandos.CONECTAR] + " " + resul;
+                            Thread th = new EnviarMensaje(vista, servidor, buff);
+                            th.start();
+                            
                         } catch (UnknownHostException ex) {
                             JOptionPane.showConfirmDialog(vista, "Se ha producido un error al conectarse a '" + resul + "', Intentelo de nuevo con otra dirección.", "Error de conexión", JOptionPane.CLOSED_OPTION);
                         }
@@ -73,19 +77,16 @@ public class Conectar extends Thread{
 
                             servidor.setDireccion(InetAddress.getByName(direccion));
 
-                            vista.setUnableDesconectar(true);
+                            String buff = Comandos.comando[Comandos.CONECTAR] + " " + resul;
+                            Thread th = new EnviarMensaje(vista, servidor, buff);
+                            th.start();
 
                         } catch (UnknownHostException ex) {
-                            errorConex = true;
                             JOptionPane.showConfirmDialog(vista, "Se ha producido un error al conectarse a '" + resul + "', Intentelo de nuevo con otra dirección.", "Error de conexión", JOptionPane.CLOSED_OPTION);
                         }
 
                     }
-
-                }
-
-                if (!errorConex){
-                    JOptionPane.showConfirmDialog(vista, "Se ha conectado correctamente a '" + resul + "'.", "Información de conexión", JOptionPane.CLOSED_OPTION);
+                    
                 }
             }
             

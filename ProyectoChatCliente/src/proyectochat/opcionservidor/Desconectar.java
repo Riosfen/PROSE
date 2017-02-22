@@ -30,7 +30,7 @@ public class Desconectar extends Thread {
     @Override
     public void run() {
         try {
-            byte[] buf = Comandos.comando[Comandos.SALIR].getBytes();
+            byte[] buf = Comandos.comando[Comandos.DESCONECTAR].getBytes();
             
             DatagramPacket envio = new DatagramPacket(buf, buf.length, servidor.getDireccion(), servidor.getPuerto());
             servidor.getServidorUDP().send(envio);

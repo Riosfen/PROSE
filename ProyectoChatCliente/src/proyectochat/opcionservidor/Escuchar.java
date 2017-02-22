@@ -5,11 +5,16 @@
  */
 package proyectochat.opcionservidor;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.DatagramPacket;
 import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 import proyectochat.ProyectoChat;
 import proyectochat.modelo.Comandos;
 import proyectochat.modelo.ServidorUDP;
@@ -23,6 +28,8 @@ public class Escuchar extends Thread{
 
     private VistaPrincipal vista;
     private ServidorUDP servidor;
+    
+    private String texto;
     
     public Escuchar (VistaPrincipal vista, ServidorUDP servidorUDP){
         this.vista = vista;
@@ -39,7 +46,7 @@ public class Escuchar extends Thread{
                 DatagramPacket reciboData = new DatagramPacket (buff, buff.length);
                 servidor.getServidorUDP().receive(reciboData);
 
-                String texto = new String(reciboData.getData());
+                texto = new String(reciboData.getData());
                 if (!tratarMensaje(texto)){
                     
                 }else{
@@ -92,8 +99,11 @@ public class Escuchar extends Thread{
                 vista.setVaciarCajaTexto();
                 break;
             case Comandos.LISTA_CLIENTES:
+                obtenerLista();
                 break;
-            case Comandos.SALIR:
+            case Comandos.DESCONECTAR:
+                servidor.getServidorUDP().disconnect();
+                vista.setUnableDesconectar(false);
                 break;
         }
     }
@@ -112,12 +122,21 @@ public class Escuchar extends Thread{
 
     private void cambiarNombre() {
         
-        
+        StringTokenizer st = new StringTokenizer(texto, " ");
+        st.nextToken();
+        servidor.setNombre(st.nextToken());
         
     }
 
     private void iniciarConexion() {
         
+        vista.setUnableDesconectar(true);
+        vista.setMensajeChatGeneral("Se ha conectado correctamente al servidor de chat.");
+        JOptionPane.showConfirmDialog(vista, "Se ha conectado correctamente al servidor", "Información", JOptionPane.CLOSED_OPTION);
+        
+    }
+
+    private void obtenerLista() {
         
         
     }

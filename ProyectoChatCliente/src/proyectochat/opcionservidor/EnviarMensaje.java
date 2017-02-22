@@ -44,7 +44,8 @@ public class EnviarMensaje extends Thread{
                     buf = mensaje.getBytes();
 
                     DatagramPacket p = new DatagramPacket(buf, buf.length, servidor.getDireccion(), servidor.getPuerto());
-                    if (!tratarMensaje(mensaje)){
+                    vista.setMensajeChatGeneral("Servidor: " + servidor.getDireccion() + "\nPuerto: " + servidor.getPuerto());
+                    if (tratarMensaje(mensaje)){
                     
                     }else{
                         servidor.getServidorUDP().send(p);
@@ -60,16 +61,16 @@ public class EnviarMensaje extends Thread{
     
     private boolean tratarMensaje(String msg) {
         
-        boolean isComando = true;
+        boolean isComando = false;
         
         StringTokenizer st = new StringTokenizer(msg, " ");
         String texto = st.nextToken();
         
         int i = 0;
-        while( i < Comandos.comando.length && isComando){
+        while( i < Comandos.comando.length && !isComando){
             
-            if (isComando && texto.equals(Comandos.comando[i])){
-                isComando = false;
+            if (texto.equals(Comandos.comando[i])){
+                isComando = true;
                 accionComando(i);
             }
             
@@ -85,18 +86,10 @@ public class EnviarMensaje extends Thread{
             case Comandos.AYUDA:
                 mostrarComandos();
                 break;
-            case Comandos.CAMBIAR_NOMBRE_CLIENTE:
-                //cambiarNombre();
-                break;
-            case Comandos.CONECTAR:
-                //iniciarConexion();
-                break;
             case Comandos.LIMPIAR_CHAT:
                 vista.setVaciarChatGeneral();
                 break;
-            case Comandos.LISTA_CLIENTES:
-                break;
-            case Comandos.SALIR:
+            case Comandos.DESCONECTAR:
                 Thread th = new Desconectar(vista, servidor);
                 th.start();
                 break;
