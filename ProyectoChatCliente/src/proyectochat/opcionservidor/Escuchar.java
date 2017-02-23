@@ -5,11 +5,7 @@
  */
 package proyectochat.opcionservidor;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.net.DatagramPacket;
 import java.util.StringTokenizer;
 import java.util.logging.Level;
@@ -110,7 +106,7 @@ public class Escuchar extends Thread{
 
     private void mostrarComandos() {
         
-        StringBuilder msg = new StringBuilder("Lista de omandos:\n");
+        StringBuilder msg = new StringBuilder("Lista de comandos:\n");
         
         for (int i = 0; i < Comandos.comando.length; i++){
         
@@ -138,6 +134,21 @@ public class Escuchar extends Thread{
 
     private void obtenerLista() {
         
+        StringTokenizer tk = new StringTokenizer(texto, " ");
+        tk.nextToken();
+        String resul = tk.nextToken();
+        
+        tk = new StringTokenizer(resul, "@");
+        vista.setNumeroClientes(tk.countTokens());
+        
+        String[] lc = new String[tk.countTokens()];
+        
+        for (int j = 0; j < lc.length; j++) {
+            lc[j] = tk.nextToken();
+        }
+        
+        vista.setNumeroClientes(tk.countTokens());
+        vista.setListaUsuarios(lc);
         
     }
     

@@ -8,6 +8,7 @@ package proyectochat.vista;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 /**
  *
@@ -20,6 +21,7 @@ public class VistaPrincipal extends javax.swing.JPanel {
      */
     public VistaPrincipal() {
         initComponents();
+        setListaUsuarios(null);
         jLabelNumCliente.setText("0");
         jButtonDesconectar.setEnabled(false);
         jButtonUsuarios.setEnabled(false);
@@ -50,7 +52,15 @@ public class VistaPrincipal extends javax.swing.JPanel {
     public String getTextoEnviar(){
         return jTextFieldEnviar.getText();
     }
-    
+    public void setListaUsuarios(String[] usuarios){
+        
+        if (usuarios == null){
+            jListUsuarios.setListData(new String[]{"No hay usuarios conectados"});
+        }else{
+            jListUsuarios.setListData(usuarios);
+            
+        }
+    }
     public void setNumeroClientes(int numero){
         jLabelNumCliente.setText(String.valueOf(numero));
     }
@@ -98,6 +108,8 @@ public class VistaPrincipal extends javax.swing.JPanel {
         jButtonNombre = new javax.swing.JButton();
         jLabelCliente = new javax.swing.JLabel();
         jLabelNumCliente = new javax.swing.JLabel();
+        jScrollPaneUsuarios = new javax.swing.JScrollPane();
+        jListUsuarios = new javax.swing.JList();
 
         setLayout(new java.awt.BorderLayout());
 
@@ -148,6 +160,10 @@ public class VistaPrincipal extends javax.swing.JPanel {
         jToolBarHerramientas.add(jLabelNumCliente);
 
         add(jToolBarHerramientas, java.awt.BorderLayout.PAGE_START);
+
+        jScrollPaneUsuarios.setViewportView(jListUsuarios);
+
+        add(jScrollPaneUsuarios, java.awt.BorderLayout.LINE_END);
     }// </editor-fold>//GEN-END:initComponents
 
 
@@ -160,9 +176,11 @@ public class VistaPrincipal extends javax.swing.JPanel {
     private javax.swing.JLabel jLabelCliente;
     private javax.swing.JLabel jLabelNombreUsuario;
     private javax.swing.JLabel jLabelNumCliente;
+    private javax.swing.JList jListUsuarios;
     private javax.swing.JPanel jPanelEnviarMensaje;
     private javax.swing.JPanel jPanelSurTools;
     private javax.swing.JScrollPane jScrollPaneChatGeneral;
+    private javax.swing.JScrollPane jScrollPaneUsuarios;
     private javax.swing.JTextArea jTextAreaChatGeneral;
     private javax.swing.JTextField jTextFieldEnviar;
     private javax.swing.JToolBar jToolBarHerramientas;

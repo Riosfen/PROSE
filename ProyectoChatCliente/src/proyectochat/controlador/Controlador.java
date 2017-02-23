@@ -65,7 +65,8 @@ public class Controlador extends WindowAdapter implements ActionListener{
                 break;
                 
             case "usuarios":
-                mostrarUsuarios();
+                Thread th = new EnviarMensaje(vista, servidor, Comandos.comando[Comandos.LISTA_CLIENTES]);
+                th.start();
                 break;
                 
             case "nombre":
@@ -77,10 +78,6 @@ public class Controlador extends WindowAdapter implements ActionListener{
                 
                 break;
         }
-        
-    }
-
-    private void mostrarUsuarios() {
         
     }
     
