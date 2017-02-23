@@ -23,11 +23,11 @@ import proyectochat.vista.VistaPrincipal;
  */
 public class Escuchar extends Thread{
 
-    private VistaPrincipal vista;
-    private ServidorUDP servidor;
+    private final VistaPrincipal vista;
+    private final ServidorUDP servidor;
     private DatagramPacket reciboData;
     private Cliente cliente;
-    private Clientes clientes;
+    private final Clientes clientes;
     
     private String texto;
     
@@ -44,15 +44,16 @@ public class Escuchar extends Thread{
             
             try {
 
-                DatagramPacket reciboData = new DatagramPacket (buff, buff.length);
+                reciboData = new DatagramPacket (buff, buff.length);
                 servidor.getServidorUDP().receive(reciboData);
 
                 texto = new String(reciboData.getData());
-                if (tratarMensaje(texto)){
-                    
-                }else{
+                //if (tratarMensaje(texto)){
+                    vista.setMensajeChatGeneral("Cliente: " + reciboData.getAddress() + ", " + reciboData.getPort());
+                    vista.setMensajeChatGeneral("Servidor: " + texto);
+                //}else{
                     vista.setMensajeChatGeneral(texto);
-                }
+                //}
                 
                 buff = new byte[1024];
 
@@ -68,12 +69,12 @@ public class Escuchar extends Thread{
         boolean isComando = false;
         
         StringTokenizer st = new StringTokenizer(msg, " ");
-        String texto = st.nextToken();
+        String resul = st.nextToken();
         
         int i = 0;
         while( i < Comandos.comando.length && !isComando){
             
-            if (texto.equals(Comandos.comando[i])){
+            if (resul.equals(Comandos.comando[i])){
                 isComando = true;
                 accionComando(i);
             }
@@ -109,12 +110,12 @@ public class Escuchar extends Thread{
 
     private void iniciarConexion() {
         
+        vista.setMensajeChatGeneral("Se ha conectado un nuevo usuario.");
         cliente = new Cliente("Cliente nº" + Cliente.num, reciboData);
         clientes.addCliente(cliente);
         clientes.enviarMulticast("Se ha conectado el cliente " + cliente.getNick());
         Thread th = new ConexionNueva(clientes, cliente, vista);
         th.start();
-        vista.setMensajeChatGeneral("Se ha conectado un nuevo usuario.");
         
         
     }

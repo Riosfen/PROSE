@@ -8,10 +8,10 @@ package proyectochat.modelo;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
-import java.net.DatagramPacket;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import proyectochat.opcionservidor.EnviarMensaje;
 
 /**
  *
@@ -72,15 +72,8 @@ public class Clientes {
         for (int i = 0; i < clientes.size(); i++) {
             Cliente c = clientes.get(i);
             
-            byte men[] = mensaje.getBytes();
-            DatagramPacket datCliente = c.getDatagrama();
+            Thread th = new EnviarMensaje(c.getServer(), mensaje);
             
-            DatagramPacket enviarPaket = new DatagramPacket(men, men.length, datCliente.getAddress(), datCliente.getPort());
-            try {
-                c.getServer().send(enviarPaket);
-            } catch (IOException ex) {
-                Logger.getLogger(Clientes.class.getName()).log(Level.SEVERE, null, ex);
-            }
         }
     }
 

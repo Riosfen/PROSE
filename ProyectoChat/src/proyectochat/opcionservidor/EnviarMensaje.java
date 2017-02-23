@@ -5,11 +5,9 @@
  */
 package proyectochat.opcionservidor;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.ObjectOutputStream;
-import java.io.OutputStream;
 import java.net.DatagramPacket;
+import java.net.DatagramSocket;
 import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -28,9 +26,15 @@ public class EnviarMensaje extends Thread{
     private ServidorUDP servidor;
     private String mensaje;
     
+    private DatagramPacket p;
+    
     public EnviarMensaje(VistaPrincipal vista, ServidorUDP servidor, String mensaje){
         this.vista = vista;
         this.servidor = servidor;
+        this.mensaje = mensaje;
+    }
+    
+    public EnviarMensaje(DatagramSocket servidor, String mensaje){
         this.mensaje = mensaje;
     }
 
@@ -46,12 +50,13 @@ public class EnviarMensaje extends Thread{
                     byte buf[] = new byte[1024];
                     buf = mensaje.getBytes();
 
-                    DatagramPacket p = new DatagramPacket(buf, buf.length, servidor.getDireccion(), servidor.getPuerto());
+                    p = new DatagramPacket(buf, buf.length, servidor.getDireccion(), servidor.getPuerto());
                     vista.setMensajeChatGeneral("Servidor: " + servidor.getDireccion() + "\nPuerto: " + servidor.getPuerto());
                     if (tratarMensaje(mensaje)){
-                    
+                        vista.setMensajeChatGeneral("Cliente: " + p.getAddress() + ", " + p.getPort());
                     }else{
                         servidor.getServidorUDP().send(p);
+                        vista.setMensajeChatGeneral("Cliente: " + p.getAddress() + ", " + p.getPort());
                     }
                     vista.setVaciarCajaTexto();
 
@@ -91,6 +96,15 @@ public class EnviarMensaje extends Thread{
                 break;
             case Comandos.LIMPIAR_CHAT:
                 vista.setVaciarChatGeneral();
+                break;
+            case Comandos.CONECTAR:
+        {
+            try {
+                servidor.getServidorUDP().send(p);
+            } catch (IOException ex) {
+                Logger.getLogger(EnviarMensaje.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
                 break;
         }
     }

@@ -24,14 +24,12 @@ import proyectochat.vista.VistaPrincipal;
 public class ConexionNueva extends Thread{
     
     private VistaPrincipal vista;
-    private DatagramSocket servidor;
     private Cliente cliente;
     private Clientes clientes;
     
     public ConexionNueva(Clientes clientes, Cliente cliente, VistaPrincipal vista){
         this.vista = vista;
         this.cliente = cliente;
-        this.servidor = cliente.getServer();
     }
 
     @Override
@@ -42,12 +40,12 @@ public class ConexionNueva extends Thread{
             byte buf[] = new byte[1024];
 
             DatagramPacket p = new DatagramPacket(buf, buf.length);
-            servidor.receive(p);
+            cliente.getServer().receive(p);
             
             String mensaje = new String(p.getData());
             
             if (tratarMensaje(mensaje)){
-
+                
             }else{
                 clientes.enviarMulticast(cliente.getNick() + ": " + mensaje);
             }
