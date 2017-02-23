@@ -10,6 +10,7 @@ import java.net.DatagramPacket;
 import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 import proyectochat.controlador.Controlador;
 import proyectochat.modelo.Comandos;
 import proyectochat.modelo.ServidorUDP;
@@ -49,11 +50,12 @@ public class EnviarMensaje extends Thread{
                     
                     }else{
                         servidor.getServidorUDP().send(p);
+                        vista.setMensajeChatGeneral("Enviado: " + mensaje);
                     }
                     vista.setVaciarCajaTexto();
 
                 } catch (IOException ex) {
-                    Logger.getLogger(Controlador.class.getName()).log(Level.SEVERE, null, ex);
+                    JOptionPane.showConfirmDialog(vista, "El servidor no responde.", "Información", JOptionPane.CLOSED_OPTION);
                 }
             }
         }

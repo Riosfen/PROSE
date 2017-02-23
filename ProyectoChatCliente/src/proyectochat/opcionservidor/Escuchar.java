@@ -25,6 +25,7 @@ public class Escuchar extends Thread{
     private VistaPrincipal vista;
     private ServidorUDP servidor;
     
+    private DatagramPacket reciboData;
     private String texto;
     
     public Escuchar (VistaPrincipal vista, ServidorUDP servidorUDP){
@@ -39,12 +40,12 @@ public class Escuchar extends Thread{
         
             try {
 
-                DatagramPacket reciboData = new DatagramPacket (buff, buff.length);
+                reciboData = new DatagramPacket (buff, buff.length);
                 servidor.getServidorUDP().receive(reciboData);
 
                 texto = new String(reciboData.getData());
                 if (!tratarMensaje(texto)){
-                    
+                    vista.setMensajeChatGeneral("Servidor: " + texto);
                 }else{
                     vista.setMensajeChatGeneral(texto);
                 }
@@ -127,6 +128,8 @@ public class Escuchar extends Thread{
     private void iniciarConexion() {
         
         vista.setUnableDesconectar(true);
+        servidor.setDireccion(reciboData.getAddress());
+        servidor.setPuerto(reciboData.getPort());
         vista.setMensajeChatGeneral("Se ha conectado correctamente al servidor de chat.");
         JOptionPane.showConfirmDialog(vista, "Se ha conectado correctamente al servidor", "Información", JOptionPane.CLOSED_OPTION);
         
