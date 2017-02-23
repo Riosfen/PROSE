@@ -9,11 +9,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import proyectochat.modelo.Cliente;
 import proyectochat.modelo.Clientes;
 import proyectochat.modelo.Comandos;
@@ -39,11 +36,8 @@ public class Controlador extends WindowAdapter implements ActionListener{
 
     @Override
     public void windowClosed(WindowEvent e) {
-        try {
-            servidor.cerrarServidor();// arreglar esto
-        } catch (IOException ex) {
-            Logger.getLogger(Controlador.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        clientes.enviarMulticast(Comandos.comando[Comandos.DESCONECTAR]);
+        System.exit(0);
     }
     
     

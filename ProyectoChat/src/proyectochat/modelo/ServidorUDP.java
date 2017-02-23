@@ -44,6 +44,9 @@ public class ServidorUDP {
             Logger.getLogger(ServidorUDP.class.getName()).log(Level.SEVERE, null, ex);
         }
         
+        vista.setDireccion(direccion.toString());
+        vista.setPuerto(puertoRemoto);
+        
     }
     
     

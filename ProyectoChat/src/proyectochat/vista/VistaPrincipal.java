@@ -22,7 +22,7 @@ public class VistaPrincipal extends javax.swing.JPanel {
      */
     public VistaPrincipal() {
         initComponents();
-        
+        setListaUsuarios(new ArrayList<String>());
         
     }
     
@@ -51,10 +51,10 @@ public class VistaPrincipal extends javax.swing.JPanel {
         jTextFieldEnviar.setText("");
     }
     public void setDireccion(String direccion){
-        jLabelDireccion.setText(direccion);
+        jLabelValorDireccion.setText(direccion);
     }
     public void setPuerto(int puerto){
-        jLabelPuerto.setText(String.valueOf(puerto));
+        jLabelValorPuerto.setText(String.valueOf(puerto));
     }
     
     public String getTextoEnviar(){

@@ -90,6 +90,20 @@ public class Escuchar extends Thread{
             case Comandos.CONECTAR:
                 iniciarConexion();
                 break;
+            case Comandos.LISTA_CLIENTES:
+                StringBuilder sb = new StringBuilder();
+                String[] lc = clientes.getNickClientes();
+                
+                sb.append(texto + " ");
+                
+                for (int j = 0; j < lc.length; j++) {
+                    sb.append(lc[j] + "@");
+                }
+                
+                Thread th = new EnviarMensaje(vista, servidor, sb.toString());
+                th.start();
+                
+                break;
         }
     }
 
@@ -97,6 +111,9 @@ public class Escuchar extends Thread{
         
         cliente = new Cliente("Cliente nº" + Cliente.num, reciboData);
         clientes.addCliente(cliente);
+        clientes.enviarMulticast("Se ha conectado el cliente " + cliente.getNick());
+        Thread th = new ConexionNueva(clientes, cliente, vista);
+        th.start();
         vista.setMensajeChatGeneral("Se ha conectado un nuevo usuario.");
         
         
