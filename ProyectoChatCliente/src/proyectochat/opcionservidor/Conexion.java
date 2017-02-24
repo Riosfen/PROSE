@@ -7,41 +7,89 @@ package proyectochat.opcionservidor;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.SocketException;
 import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import proyectochat.ProyectoChat;
+import proyectochat.modelo.Cliente;
 import proyectochat.modelo.Comandos;
-import proyectochat.modelo.ServidorUDP;
 import proyectochat.vista.VistaPrincipal;
 
 /**
  *
  * @author samo_
  */
-public class Escuchar extends Thread{
+public class Conexion extends Thread{
 
+    private static final int PUERTO_REMOTO = 40000;
+    
     private VistaPrincipal vista;
-    private ServidorUDP servidor;
+    private DatagramSocket servidor;
+    private Cliente cliente;
     
     private DatagramPacket reciboData;
     private String texto;
     
-    public Escuchar (VistaPrincipal vista, ServidorUDP servidorUDP){
-        this.vista = vista;
-        this.servidor = servidorUDP;
+    public Conexion (VistaPrincipal vista, Cliente cliente){
+        try {
+      
+            this.cliente = cliente;
+            this.vista = vista;
+            this.servidor = new DatagramSocket();
+        
+        } catch (SocketException ex) {
+            Logger.getLogger(Conexion.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
+    // En este hilo le mando un mensaje con "/connect" que recibe el servidor
+    //
     @Override
     public void run() {
+        
         byte buff[] = new byte[1024];
-        while(!servidor.getServidorUDP().isClosed()){
+        
+        try {
+            
+            // mando el codigo "/connect nombreUsuario" al servidor
+            buff = (Comandos.comando[Comandos.CONECTAR] + " " + cliente.getNombre()).getBytes();
+            reciboData = new DatagramPacket(buff, buff.length, InetAddress.getLocalHost(), PUERTO_REMOTO);
+            vista.setMensajeChatGeneral("Se ha enviado una peticion al servidor...");
+            servidor.send(reciboData);
+            
+            System.err.println("Puerto1: " + PUERTO_REMOTO);
+            
+            buff = new byte[1024];
+
+            // si recibo "/connect" del servidor, le paso a la clase cliente la direccion y el puerto
+            reciboData = new DatagramPacket (buff, buff.length);
+            vista.setMensajeChatGeneral("Esperando respuesta...");
+            servidor.receive(reciboData);
+
+            cliente.setDireccion(reciboData.getAddress());
+            cliente.setPuertoRemoto(reciboData.getPort());
+            cliente.getServer().connect(reciboData.getAddress(), reciboData.getPort());
+            
+            vista.setMensajeChatGeneral(new String(reciboData.getData()));
+            System.err.println("Puerto2 servidor: " + cliente.getPuertoRemoto());
+            
+        
+        } catch (IOException ex) {
+            Logger.getLogger(Conexion.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        buff = new byte[1024];
+        
+        while(!servidor.isClosed()){
         
             try {
 
                 reciboData = new DatagramPacket (buff, buff.length);
-                servidor.getServidorUDP().receive(reciboData);
+                servidor.receive(reciboData);
 
                 texto = new String(reciboData.getData());
                 if (!tratarMensaje(texto)){
@@ -64,12 +112,12 @@ public class Escuchar extends Thread{
         boolean isComando = true;
         
         StringTokenizer st = new StringTokenizer(msg, " ");
-        String texto = st.nextToken();
+        String resul = st.nextToken();
         
         int i = 0;
         while( i < Comandos.comando.length && isComando){
             
-            if (isComando && texto.equals(Comandos.comando[i])){
+            if (isComando && resul.equals(Comandos.comando[i])){
                 isComando = false;
                 accionComando(i);
             }
@@ -86,12 +134,6 @@ public class Escuchar extends Thread{
             case Comandos.AYUDA:
                 mostrarComandos();
                 break;
-            case Comandos.CAMBIAR_NOMBRE_CLIENTE:
-                cambiarNombre();
-                break;
-            case Comandos.CONECTAR:
-                iniciarConexion();
-                break;
             case Comandos.LIMPIAR_CHAT:
                 vista.setVaciarCajaTexto();
                 break;
@@ -99,8 +141,8 @@ public class Escuchar extends Thread{
                 obtenerLista();
                 break;
             case Comandos.DESCONECTAR:
-                servidor.getServidorUDP().disconnect();
-                vista.setUnableDesconectar(false);
+                servidor.disconnect();
+                JOptionPane.showConfirmDialog(vista, "Se ha desconectado el servidor", "Información", JOptionPane.CLOSED_OPTION);
                 break;
         }
     }
@@ -114,24 +156,6 @@ public class Escuchar extends Thread{
             msg.append(Comandos.comando[i]);
             
         }
-        
-    }
-
-    private void cambiarNombre() {
-        
-        StringTokenizer st = new StringTokenizer(texto, " ");
-        st.nextToken();
-        servidor.setNombre(st.nextToken());
-        
-    }
-
-    private void iniciarConexion() {
-        
-        vista.setUnableDesconectar(true);
-        servidor.setDireccion(reciboData.getAddress());
-        servidor.setPuerto(reciboData.getPort());
-        vista.setMensajeChatGeneral("Se ha conectado correctamente al servidor de chat.");
-        JOptionPane.showConfirmDialog(vista, "Se ha conectado correctamente al servidor", "Información", JOptionPane.CLOSED_OPTION);
         
     }
 

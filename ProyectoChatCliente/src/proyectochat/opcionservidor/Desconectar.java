@@ -7,11 +7,11 @@ package proyectochat.opcionservidor;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
+import java.net.InetAddress;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import proyectochat.modelo.Cliente;
 import proyectochat.modelo.Comandos;
-import proyectochat.modelo.ServidorUDP;
-import proyectochat.vista.VistaPrincipal;
 
 /**
  *
@@ -19,12 +19,10 @@ import proyectochat.vista.VistaPrincipal;
  */
 public class Desconectar extends Thread {
     
-    private VistaPrincipal vista;
-    private ServidorUDP servidor;
+    private Cliente cliente;
     
-    public Desconectar(VistaPrincipal vista, ServidorUDP servidor){
-        this.vista = vista;
-        this.servidor = servidor;
+    public Desconectar(Cliente cliente){
+        this.cliente = cliente;
     }
 
     @Override
@@ -32,15 +30,14 @@ public class Desconectar extends Thread {
         try {
             byte[] buf = Comandos.comando[Comandos.DESCONECTAR].getBytes();
             
-            DatagramPacket envio = new DatagramPacket(buf, buf.length, servidor.getDireccion(), servidor.getPuerto());
-            servidor.getServidorUDP().send(envio);
+            DatagramPacket envio = new DatagramPacket(buf, buf.length, InetAddress.getLocalHost(), cliente.getPuertoRemoto());
+            cliente.getServer().send(envio);
             
         } catch (IOException ex) {
-            Logger.getLogger(ServidorUDP.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Cliente.class.getName()).log(Level.SEVERE, null, ex);
         }
         
-        servidor.getServidorUDP().disconnect();
-        vista.setUnableDesconectar(false);
+        cliente.getServer().disconnect();
     }
     
 }

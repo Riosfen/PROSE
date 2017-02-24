@@ -10,9 +10,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import javax.swing.JOptionPane;
+import proyectochat.modelo.Cliente;
 import proyectochat.modelo.Comandos;
-import proyectochat.opcionservidor.Conectar;
-import proyectochat.modelo.ServidorUDP;
 import proyectochat.opcionservidor.Desconectar;
 import proyectochat.opcionservidor.EnviarMensaje;
 import proyectochat.vista.VistaPrincipal;
@@ -24,18 +23,18 @@ import proyectochat.vista.VistaPrincipal;
 public class Controlador extends WindowAdapter implements ActionListener{
 
     private VistaPrincipal vista;
-    private ServidorUDP servidor;
+    private Cliente cliente;
     private Thread th;
     
-    public Controlador(VistaPrincipal vista, ServidorUDP servidor){
+    public Controlador(VistaPrincipal vista, Cliente cliente){
+        this.cliente = cliente;
         this.vista = vista;
-        this.servidor = servidor;
     
     }
 
     @Override
     public void windowClosed(WindowEvent e) {
-        th = new Desconectar(vista, servidor);
+        th = new Desconectar(cliente);
         th.start();
     }
     
@@ -44,35 +43,30 @@ public class Controlador extends WindowAdapter implements ActionListener{
         switch(e.getActionCommand()){
             case "enviar":
                 String texto = vista.getTextoEnviar().trim();
-                th = new EnviarMensaje(vista, servidor, texto);
+                th = new EnviarMensaje(vista, texto, cliente);
                 th.start();
                 break;
                 
             case "salir":
-                th = new Desconectar(vista, servidor);
+                th = new Desconectar(cliente);
                 th.start();
                 System.exit(0);
                 break;
                 
-            case "conectar":
-                th = new Conectar(vista, servidor);
-                th.start();
-                break;
-                
             case "desconectar":
-                th = new Desconectar(vista, servidor);
+                th = new Desconectar(cliente);
                 th.start();
                 break;
                 
             case "usuarios":
-                Thread th = new EnviarMensaje(vista, servidor, Comandos.comando[Comandos.LISTA_CLIENTES]);
+                Thread th = new EnviarMensaje(vista, Comandos.comando[Comandos.LISTA_CLIENTES], cliente);
                 th.start();
                 break;
                 
             case "nombre":
                 String resultado = JOptionPane.showInputDialog(vista, "Nombre de usuario: ", "Cambiar nombre", JOptionPane.INFORMATION_MESSAGE);
                 if (resultado != null){
-                    th = new EnviarMensaje(vista, servidor, Comandos.comando[Comandos.CAMBIAR_NOMBRE_CLIENTE] + " " + resultado);
+                    th = new EnviarMensaje(vista, Comandos.comando[Comandos.CAMBIAR_NOMBRE_CLIENTE] + " " + resultado, cliente);
                     th.start();
                 }
                 

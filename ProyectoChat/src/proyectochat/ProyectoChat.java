@@ -29,7 +29,7 @@ public class ProyectoChat {
         
         JFrame ventana = new JFrame("Servidor de mensajeria simple");
         VistaPrincipal vista = new VistaPrincipal();
-        Clientes clientes = new Clientes();
+        Clientes clientes = new Clientes(vista);
         ServidorUDP servidor = new ServidorUDP(vista);
         Controlador c = new Controlador(vista, clientes, servidor);
         

@@ -6,35 +6,30 @@
 package proyectochat.vista;
 
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import proyectochat.modelo.Clientes;
 
 /**
  *
  * @author samo_
  */
 public class VistaPrincipal extends javax.swing.JPanel {
-
-    private Clientes clientes;
     
     /**
      * Creates new form VistaPrincipal
      */
     public VistaPrincipal() {
         initComponents();
-        setListaUsuarios(new ArrayList<String>());
-        
+        jListUsuarios.setListData(new String[]{"No hay usuarios conectados"});
     }
     
     public void setMensajeChatGeneral(String mensaje){
         jTextAreaChatGeneral.setText(jTextAreaChatGeneral.getText() + "\n------------------------------------------\n" + mensaje);
     }
-    public void setListaUsuarios(ArrayList<String> usuarios){
+    public void setListaUsuarios(String[] usuarios){
         
-        if (usuarios.isEmpty()){
+        if (usuarios.length < 1){
             jListUsuarios.setListData(new String[]{"No hay usuarios conectados"});
         }else{
-            jListUsuarios.setListData(clientes.getNickClientes());
+            jListUsuarios.setListData(usuarios);
             
         }
     }
@@ -64,13 +59,11 @@ public class VistaPrincipal extends javax.swing.JPanel {
     public void addControlador(ActionListener e){
         jButtonEnviar.addActionListener(e);
         jTextFieldEnviar.addActionListener(e);
-        jButtonMostrarUsuario.addActionListener(e);
         jButtonParar.addActionListener(e);
         jButtonSalir.addActionListener(e);
         
         jButtonEnviar.setActionCommand("enviar");
         jTextFieldEnviar.setActionCommand("enviar");
-        jButtonMostrarUsuario.setActionCommand("mostrar");
         jButtonParar.setActionCommand("parar");
         jButtonSalir.setActionCommand("salir");
     }
@@ -89,7 +82,6 @@ public class VistaPrincipal extends javax.swing.JPanel {
         jPanelSurTools = new javax.swing.JPanel();
         jPanelOpciones = new javax.swing.JPanel();
         jButtonParar = new javax.swing.JButton();
-        jButtonMostrarUsuario = new javax.swing.JButton();
         jPanelSalir = new javax.swing.JPanel();
         jButtonSalir = new javax.swing.JButton();
         jPanelEnviarMensaje = new javax.swing.JPanel();
@@ -118,9 +110,6 @@ public class VistaPrincipal extends javax.swing.JPanel {
 
         jButtonParar.setText("Desconectar Clientes");
         jPanelOpciones.add(jButtonParar);
-
-        jButtonMostrarUsuario.setText("Mostrar Usuarios");
-        jPanelOpciones.add(jButtonMostrarUsuario);
 
         jPanelSurTools.add(jPanelOpciones, java.awt.BorderLayout.CENTER);
 
@@ -167,7 +156,6 @@ public class VistaPrincipal extends javax.swing.JPanel {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButtonEnviar;
-    private javax.swing.JButton jButtonMostrarUsuario;
     private javax.swing.JButton jButtonParar;
     private javax.swing.JButton jButtonSalir;
     private javax.swing.JLabel jLabelDireccion;

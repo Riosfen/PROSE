@@ -5,13 +5,9 @@
  */
 package proyectochat.modelo;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import proyectochat.opcionservidor.EnviarMensaje;
+import proyectochat.vista.VistaPrincipal;
 
 /**
  *
@@ -20,8 +16,10 @@ import proyectochat.opcionservidor.EnviarMensaje;
 public class Clientes {
     
     private ArrayList<Cliente> clientes;
+    private VistaPrincipal vista;
     
-    public Clientes(){
+    public Clientes(VistaPrincipal vista){
+        this.vista = vista;
         clientes = new ArrayList<Cliente>();
     }
 
@@ -32,35 +30,15 @@ public class Clientes {
         return clientes.get(pos);
     }
     public void addCliente(Cliente cliente){
-        ObjectOutputStream out = null;
-        try {
-            
-            clientes.add(cliente);
-            
-            //TODO aqui se manda junto con la lista de clientes un array de string con los nombres de los clientes
-            ByteArrayOutputStream contentStream = new ByteArrayOutputStream();
-            out = new ObjectOutputStream(contentStream);
-            out.writeObject(getNickClientes());
-            out.flush();
-            out.close();
-            
-            enviarMulticast(Comandos.comando[Comandos.LISTA_CLIENTES]);
-            
-        } catch (IOException ex) {
-            Logger.getLogger(Clientes.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            try {
-                out.close();
-            } catch (IOException ex) {
-                Logger.getLogger(Clientes.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
+        clientes.add(cliente);
+        vista.setListaUsuarios(getNickClientes());
+        enviarMulticast(Comandos.comando[Comandos.LISTA_CLIENTES]);
         
     }
     public String[] getNickClientes(){
         String[] listaClientes = new String[clientes.size()];
         
-        for (int i = 0; 0 < clientes.size() ; i++) {
+        for (int i = 0; i < clientes.size() ; i++) {
             listaClientes[i] = clientes.get(i).getNombre();
         }
         
@@ -72,9 +50,25 @@ public class Clientes {
         for (int i = 0; i < clientes.size(); i++) {
             Cliente c = clientes.get(i);
             
-            Thread th = new EnviarMensaje(c.getServer(), mensaje);
+            Thread th = new EnviarMensaje(c, mensaje);
+            th.start();
             
         }
+    }
+    
+    public void enviarListaClientes(){
+        
+        StringBuilder sb = new StringBuilder();
+        
+        for (int i = 0; i < clientes.size(); i++) {
+            Cliente c = clientes.get(i);
+            
+            sb.append(c.getNick() + "@");
+            
+        }
+        
+        enviarMulticast(Comandos.comando[Comandos.LISTA_CLIENTES] + " " + sb.toString());
+        
     }
 
     public void eliminarCliente(Cliente cliente) {

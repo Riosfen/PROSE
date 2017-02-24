@@ -19,33 +19,25 @@ import proyectochat.vista.VistaPrincipal;
  */
 public class ServidorUDP {
     
-    private static final int PUERTO_REMOTO = 4000;
+    private static final int PUERTO = 40000;
     
-    private int puertoRemoto;
     private DatagramSocket servidorUDP;
-    private VistaPrincipal vista;
     private InetAddress direccion;
-    private String nombre;
     
     public ServidorUDP(VistaPrincipal vista){
         try {
+
             this.direccion = InetAddress.getLocalHost();
-        } catch (UnknownHostException ex) {
-            Logger.getLogger(ServidorUDP.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        this.vista = vista;
-        this.puertoRemoto = PUERTO_REMOTO;
-        
-        try {
+            servidorUDP = new DatagramSocket(PUERTO, direccion);
             
-            servidorUDP = new DatagramSocket();
-            
-        } catch (SocketException ex) {
+        } catch (SocketException | UnknownHostException ex) {
             Logger.getLogger(ServidorUDP.class.getName()).log(Level.SEVERE, null, ex);
         }
         
+        // Muestro en la ventana el puerto y la direccion
+        //
         vista.setDireccion(direccion.toString());
-        vista.setPuerto(puertoRemoto);
+        vista.setPuerto(servidorUDP.getLocalPort());
         
     }
     
@@ -54,34 +46,11 @@ public class ServidorUDP {
     public boolean isActive(){
         return !servidorUDP.isClosed();
     }
-    public int getPuerto(){
-        return puertoRemoto;
-    }
     public DatagramSocket getServidorUDP(){
         return servidorUDP;
     }
     public InetAddress getDireccion() {
         return direccion;
-    }
-    public String getNombre() {
-        return nombre;
-    }
-    
-    public void setPuerto(int puerto){
-        
-        servidorUDP.disconnect();
-        
-        servidorUDP.connect(direccion, puerto);
-        this.puertoRemoto = puerto;
-        
-    }
-    public void setDireccion(InetAddress direccion){
-        
-        servidorUDP.disconnect();
-        
-        servidorUDP.connect(direccion, puertoRemoto);
-        this.direccion = direccion;
-        
     }
     // fin getter and setter
     

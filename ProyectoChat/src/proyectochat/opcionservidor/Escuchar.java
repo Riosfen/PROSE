@@ -39,23 +39,21 @@ public class Escuchar extends Thread{
     
     @Override
     public void run() {
-        byte buff[] = new byte[1024];
         while(!servidor.getServidorUDP().isClosed()){
             
             try {
+                
+                byte buff[] = new byte[1024];   
 
                 reciboData = new DatagramPacket (buff, buff.length);
                 servidor.getServidorUDP().receive(reciboData);
 
                 texto = new String(reciboData.getData());
-                //if (tratarMensaje(texto)){
-                    vista.setMensajeChatGeneral("Cliente: " + reciboData.getAddress() + ", " + reciboData.getPort());
+                if (tratarMensaje(texto)){
+                    
+                }else{
                     vista.setMensajeChatGeneral("Servidor: " + texto);
-                //}else{
-                    vista.setMensajeChatGeneral(texto);
-                //}
-                
-                buff = new byte[1024];
+                }
 
             } catch (IOException ex) {
                 Logger.getLogger(ProyectoChat.class.getName()).log(Level.SEVERE, null, ex);
@@ -91,32 +89,20 @@ public class Escuchar extends Thread{
             case Comandos.CONECTAR:
                 iniciarConexion();
                 break;
-            case Comandos.LISTA_CLIENTES:
-                StringBuilder sb = new StringBuilder();
-                String[] lc = clientes.getNickClientes();
-                
-                sb.append(texto + " ");
-                
-                for (int j = 0; j < lc.length; j++) {
-                    sb.append(lc[j] + "@");
-                }
-                
-                Thread th = new EnviarMensaje(vista, servidor, sb.toString());
-                th.start();
-                
-                break;
         }
     }
 
     private void iniciarConexion() {
         
-        vista.setMensajeChatGeneral("Se ha conectado un nuevo usuario.");
-        cliente = new Cliente("Cliente nº" + Cliente.num, reciboData);
+        StringTokenizer st = new StringTokenizer(texto, " ");
+        st.nextToken();
+        
+        cliente = new Cliente(st.nextToken() , reciboData);
+        vista.setMensajeChatGeneral(cliente.getNick() + ", se ha conectado correctamente al servidor.");
+        
         clientes.addCliente(cliente);
-        clientes.enviarMulticast("Se ha conectado el cliente " + cliente.getNick());
         Thread th = new ConexionNueva(clientes, cliente, vista);
         th.start();
-        
         
     }
     

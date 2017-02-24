@@ -23,19 +23,11 @@ public class VistaPrincipal extends javax.swing.JPanel {
         initComponents();
         setListaUsuarios(null);
         jLabelNumCliente.setText("0");
-        jButtonDesconectar.setEnabled(false);
-        jButtonUsuarios.setEnabled(false);
         
     }
     
     public void setVaciarChatGeneral(){
         jTextAreaChatGeneral.setText("");
-    }
-    
-    public void setUnableDesconectar(boolean b){
-        jButtonDesconectar.setEnabled(b);
-        jButtonUsuarios.setEnabled(b);
-        jLabelNumCliente.setText("0");
     }
     
     public void setMensajeChatGeneral(String mensaje){
@@ -65,22 +57,12 @@ public class VistaPrincipal extends javax.swing.JPanel {
         jLabelNumCliente.setText(String.valueOf(numero));
     }
     
-    public void setNombreUsuario(String nombre){
-        jLabelNombreUsuario.setText(nombre);
-    }
-    
     public void addControlador(ActionListener e){
-        jButtonConectar.addActionListener(e);
         jButtonDesconectar.addActionListener(e);
-        jButtonUsuarios.addActionListener(e);
         jButtonEnviar.addActionListener(e);
         jTextFieldEnviar.addActionListener(e);
-        jButtonNombre.addActionListener(e);
         
-        jButtonNombre.setActionCommand("nombre");
-        jButtonConectar.setActionCommand("conectar");
         jButtonDesconectar.setActionCommand("desconectar");
-        jButtonUsuarios.setActionCommand("usuarios");
         jButtonEnviar.setActionCommand("enviar");
         jTextFieldEnviar.setActionCommand("enviar");
     }
@@ -100,12 +82,8 @@ public class VistaPrincipal extends javax.swing.JPanel {
         jPanelEnviarMensaje = new javax.swing.JPanel();
         jTextFieldEnviar = new javax.swing.JTextField();
         jButtonEnviar = new javax.swing.JButton();
-        jLabelNombreUsuario = new javax.swing.JLabel();
         jToolBarHerramientas = new javax.swing.JToolBar();
-        jButtonConectar = new javax.swing.JButton();
         jButtonDesconectar = new javax.swing.JButton();
-        jButtonUsuarios = new javax.swing.JButton();
-        jButtonNombre = new javax.swing.JButton();
         jLabelCliente = new javax.swing.JLabel();
         jLabelNumCliente = new javax.swing.JLabel();
         jScrollPaneUsuarios = new javax.swing.JScrollPane();
@@ -128,32 +106,14 @@ public class VistaPrincipal extends javax.swing.JPanel {
         jButtonEnviar.setText("Enviar");
         jPanelEnviarMensaje.add(jButtonEnviar, java.awt.BorderLayout.LINE_END);
 
-        jLabelNombreUsuario.setText("Usuario: ");
-        jPanelEnviarMensaje.add(jLabelNombreUsuario, java.awt.BorderLayout.LINE_START);
-
         jPanelSurTools.add(jPanelEnviarMensaje, java.awt.BorderLayout.NORTH);
 
         add(jPanelSurTools, java.awt.BorderLayout.PAGE_END);
 
         jToolBarHerramientas.setRollover(true);
 
-        jButtonConectar.setText("Conectar");
-        jButtonConectar.setFocusable(false);
-        jButtonConectar.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        jButtonConectar.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        jToolBarHerramientas.add(jButtonConectar);
-
         jButtonDesconectar.setText("Desconectar");
         jToolBarHerramientas.add(jButtonDesconectar);
-
-        jButtonUsuarios.setText("Usuarios");
-        jToolBarHerramientas.add(jButtonUsuarios);
-
-        jButtonNombre.setText("Cambiar nombre");
-        jButtonNombre.setFocusable(false);
-        jButtonNombre.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        jButtonNombre.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        jToolBarHerramientas.add(jButtonNombre);
 
         jLabelCliente.setText("Total clientes: ");
         jToolBarHerramientas.add(jLabelCliente);
@@ -168,13 +128,9 @@ public class VistaPrincipal extends javax.swing.JPanel {
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButtonConectar;
     private javax.swing.JButton jButtonDesconectar;
     private javax.swing.JButton jButtonEnviar;
-    private javax.swing.JButton jButtonNombre;
-    private javax.swing.JButton jButtonUsuarios;
     private javax.swing.JLabel jLabelCliente;
-    private javax.swing.JLabel jLabelNombreUsuario;
     private javax.swing.JLabel jLabelNumCliente;
     private javax.swing.JList jListUsuarios;
     private javax.swing.JPanel jPanelEnviarMensaje;

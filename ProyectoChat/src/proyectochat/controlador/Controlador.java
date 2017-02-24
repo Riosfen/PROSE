@@ -56,10 +56,6 @@ public class Controlador extends WindowAdapter implements ActionListener{
                 }
                 break;
                 
-            case "mostrar":
-                mostrarUsuarios();
-                break;
-                
             case "parar":
                 clientes.enviarMulticast(Comandos.comando[Comandos.DESCONECTAR]);
                 
@@ -71,25 +67,7 @@ public class Controlador extends WindowAdapter implements ActionListener{
                 System.exit(0);
                 break;
         }
-    }
-
-    public void mostrarUsuarios() {
-        ArrayList<Cliente> lCliente = clientes.getClientes();
-                    
-        ArrayList<String> usuarios = new ArrayList<String>();
-
-        if (lCliente.isEmpty()){
-            vista.setListaUsuarios(usuarios);
-        }else{
-            for (Iterator<Cliente> iterator = lCliente.iterator(); iterator.hasNext();) {
-                Cliente cliente = iterator.next();
-
-                usuarios.add(cliente.getNombre());
-
-            }
-            vista.setListaUsuarios(usuarios);
-
-        }
+        
     }
     
 }

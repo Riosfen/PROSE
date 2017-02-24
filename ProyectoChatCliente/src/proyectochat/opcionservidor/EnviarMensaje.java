@@ -7,13 +7,12 @@ package proyectochat.opcionservidor;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
 import java.util.StringTokenizer;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JOptionPane;
-import proyectochat.controlador.Controlador;
+import proyectochat.modelo.Cliente;
 import proyectochat.modelo.Comandos;
-import proyectochat.modelo.ServidorUDP;
 import proyectochat.vista.VistaPrincipal;
 
 /**
@@ -23,12 +22,14 @@ import proyectochat.vista.VistaPrincipal;
 public class EnviarMensaje extends Thread{
     
     private VistaPrincipal vista;
-    private ServidorUDP servidor;
+    private DatagramSocket servidor;
     private String mensaje;
+    private Cliente cliente;
     
-    public EnviarMensaje(VistaPrincipal vista, ServidorUDP servidor, String mensaje){
+    public EnviarMensaje(VistaPrincipal vista, String mensaje, Cliente cliente){
+        this.cliente = cliente;
         this.vista = vista;
-        this.servidor = servidor;
+        this.servidor = cliente.getServer();
         this.mensaje = mensaje;
     }
 
@@ -44,17 +45,17 @@ public class EnviarMensaje extends Thread{
                     byte buf[] = new byte[1024];
                     buf = mensaje.getBytes();
 
-                    DatagramPacket p = new DatagramPacket(buf, buf.length, servidor.getDireccion(), servidor.getPuerto());
-                    vista.setMensajeChatGeneral("Servidor: " + servidor.getDireccion() + "\nPuerto: " + servidor.getPuerto());
+                    DatagramPacket p = new DatagramPacket(buf, buf.length, InetAddress.getLocalHost(), cliente.getPuertoRemoto());
+                    System.out.println(cliente.getPuertoRemoto());
                     if (tratarMensaje(mensaje)){
                     
                     }else{
-                        servidor.getServidorUDP().send(p);
-                        vista.setMensajeChatGeneral("Enviado: " + mensaje);
+                        servidor.send(p);
+                        vista.setMensajeChatGeneral(cliente.getNombre() + ": " + mensaje);
                     }
                     vista.setVaciarCajaTexto();
 
-                } catch (IOException ex) {
+                } catch (IOException e) {
                     JOptionPane.showConfirmDialog(vista, "El servidor no responde.", "Información", JOptionPane.CLOSED_OPTION);
                 }
             }
@@ -92,7 +93,7 @@ public class EnviarMensaje extends Thread{
                 vista.setVaciarChatGeneral();
                 break;
             case Comandos.DESCONECTAR:
-                Thread th = new Desconectar(vista, servidor);
+                Thread th = new Desconectar(cliente);
                 th.start();
                 break;
         }

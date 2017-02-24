@@ -7,13 +7,12 @@ package proyectochat.opcionservidor;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
-import java.net.DatagramSocket;
+import java.net.InetAddress;
 import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import proyectochat.controlador.Controlador;
+import proyectochat.modelo.Cliente;
 import proyectochat.modelo.Comandos;
-import proyectochat.modelo.ServidorUDP;
 import proyectochat.vista.VistaPrincipal;
 
 /**
@@ -23,19 +22,18 @@ import proyectochat.vista.VistaPrincipal;
 public class EnviarMensaje extends Thread{
     
     private VistaPrincipal vista;
-    private ServidorUDP servidor;
+    private Cliente cliente;
     private String mensaje;
     
-    private DatagramPacket p;
-    
-    public EnviarMensaje(VistaPrincipal vista, ServidorUDP servidor, String mensaje){
+    public EnviarMensaje(VistaPrincipal vista, Cliente cliente, String mensaje){
         this.vista = vista;
-        this.servidor = servidor;
+        this.cliente = cliente;
         this.mensaje = mensaje;
     }
     
-    public EnviarMensaje(DatagramSocket servidor, String mensaje){
+    public EnviarMensaje(Cliente cliente, String mensaje){
         this.mensaje = mensaje;
+        this.cliente = cliente;
     }
 
     @Override
@@ -50,18 +48,17 @@ public class EnviarMensaje extends Thread{
                     byte buf[] = new byte[1024];
                     buf = mensaje.getBytes();
 
-                    p = new DatagramPacket(buf, buf.length, servidor.getDireccion(), servidor.getPuerto());
-                    vista.setMensajeChatGeneral("Servidor: " + servidor.getDireccion() + "\nPuerto: " + servidor.getPuerto());
+                    DatagramPacket p = new DatagramPacket(buf, buf.length, InetAddress.getLocalHost(), cliente.getPuertoRemoto());
                     if (tratarMensaje(mensaje)){
-                        vista.setMensajeChatGeneral("Cliente: " + p.getAddress() + ", " + p.getPort());
+                        
                     }else{
-                        servidor.getServidorUDP().send(p);
-                        vista.setMensajeChatGeneral("Cliente: " + p.getAddress() + ", " + p.getPort());
+                        cliente.getServer().send(p);
+                        vista.setMensajeChatGeneral("Servidor: " + mensaje);
                     }
                     vista.setVaciarCajaTexto();
 
                 } catch (IOException ex) {
-                    Logger.getLogger(Controlador.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(EnviarMensaje.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
         }
@@ -96,15 +93,6 @@ public class EnviarMensaje extends Thread{
                 break;
             case Comandos.LIMPIAR_CHAT:
                 vista.setVaciarChatGeneral();
-                break;
-            case Comandos.CONECTAR:
-        {
-            try {
-                servidor.getServidorUDP().send(p);
-            } catch (IOException ex) {
-                Logger.getLogger(EnviarMensaje.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
                 break;
         }
     }
