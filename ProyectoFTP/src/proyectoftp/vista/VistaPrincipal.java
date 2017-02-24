@@ -5,6 +5,9 @@
  */
 package proyectoftp.vista;
 
+import java.awt.event.ActionListener;
+import java.io.File;
+
 /**
  *
  * @author alumno2damdiurno
@@ -18,6 +21,62 @@ public class VistaPrincipal extends javax.swing.JPanel {
         initComponents();
     }
 
+    public void addControlador(ActionListener e){
+        
+        this.jButtonSubirFichero.addActionListener(e);
+        this.jButtonSubirFichero.setActionCommand("botonSubirFichero");
+        
+        this.jButtonDescargarFichero.addActionListener(e);
+        this.jButtonDescargarFichero.setActionCommand("botonDescargarFichero");
+        
+        this.jButtonEliminarFichero.addActionListener(e);
+        this.jButtonEliminarFichero.setActionCommand("botonEliminarFichero");
+        
+        this.jButtonCrearDirectorio.addActionListener(e);
+        this.jButtonCrearDirectorio.setActionCommand("botonCrearDirectorio");
+        
+        this.jButtonEliminarDirectorio.addActionListener(e);
+        this.jButtonEliminarDirectorio.setActionCommand("botonEliminarDirectorio");
+        
+        this.jButtonSalir.addActionListener(e);
+        this.jButtonSalir.setActionCommand("botonSalir");
+        
+    }
+    
+    public void setValorServidor(String direccionFtp){
+        
+        this.jLabelServidorValor.setText(direccionFtp);
+        
+    }
+    
+    public void setDirectorioRaiz(String directorio){
+        
+        this.jLabelDirectorioRaizValor.setText(directorio);
+    }
+    
+    public void setValorUsuario(String usu){
+        
+        this.jLabelUsuarioValor.setText(usu);
+    }
+    
+    public void setDirectorio(String directorio){
+        
+        this.jLabelDirectorioValor.setText(directorio);
+    }
+    
+    public void setDirectorioActual(String directorioActual){
+        
+        this.jLabelDirectorioActualValor.setText(directorioActual);
+    }
+    
+    public void setJLista(String[] lista){
+        
+        this.jListItems.setListData(lista);
+        
+    }
+    
+    
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -172,4 +231,6 @@ public class VistaPrincipal extends javax.swing.JPanel {
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
     // End of variables declaration//GEN-END:variables
+
+    
 }

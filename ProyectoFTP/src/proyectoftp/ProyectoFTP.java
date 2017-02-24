@@ -7,6 +7,8 @@ package proyectoftp;
 
 import proyectoftp.vista.VistaPrincipal;
 import javax.swing.JFrame;
+import proyectoftp.controlador.Controlador;
+import proyectoftp.modelo.ClienteFTP;
 
 /**
  *
@@ -21,6 +23,17 @@ public class ProyectoFTP {
         
         JFrame ventana = new JFrame("Cliente FTP");
         VistaPrincipal vista = new VistaPrincipal();
+        ClienteFTP cliente = new ClienteFTP();
+        Controlador controlador = new Controlador(vista, cliente);
+    
+        
+        vista.addControlador(controlador);
+        
+        
+        ventana.add(vista);
+        ventana.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        ventana.pack();
+        ventana.setVisible(true);
         
     }
     
