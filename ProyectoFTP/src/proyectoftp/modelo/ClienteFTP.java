@@ -69,7 +69,8 @@ public class ClienteFTP {
         clienteFtp.setFileType(FTPClient.BINARY_FILE_TYPE,FTPClient.BINARY_FILE_TYPE);
         BufferedInputStream filtroLectura = new BufferedInputStream(new FileInputStream(file));
         
-        clienteFtp.
+        clienteFtp.enterRemotePassiveMode();
+        
         clienteFtp.storeFile("http://victormanuel-carmona.esy.es/FTP-PSP/"+file.getName(), filtroLectura);
      
           System.err.println("DENTRO");
