@@ -6,7 +6,7 @@
 package proyectoftp.vista;
 
 import java.awt.event.ActionListener;
-import java.io.File;
+import javax.swing.DefaultListModel;
 
 /**
  *
@@ -17,8 +17,14 @@ public class VistaPrincipal extends javax.swing.JPanel {
     /**
      * Creates new form VistaPrincipal
      */
+    
+    private DefaultListModel modelo;
+    
     public VistaPrincipal() {
         initComponents();
+        
+        modelo = new DefaultListModel();
+        jListItems.setModel(modelo);
     }
 
     public void addControlador(ActionListener e){
@@ -43,13 +49,21 @@ public class VistaPrincipal extends javax.swing.JPanel {
         
     }
     
+    public void annadirDato(String dato){
+        
+        modelo.addElement(dato);    
+        
+    }
+    
+    
+    
     public void setValorServidor(String direccionFtp){
         
         this.jLabelServidorValor.setText(direccionFtp);
         
     }
     
-    public void setDirectorioRaiz(String directorio){
+    public void setValorDirectorioRaiz(String directorio){
         
         this.jLabelDirectorioRaizValor.setText(directorio);
     }
