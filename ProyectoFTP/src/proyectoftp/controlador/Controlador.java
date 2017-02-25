@@ -7,7 +7,7 @@ package proyectoftp.controlador;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
+import java.awt.event.MouseListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.logging.Level;
@@ -78,6 +78,8 @@ public class Controlador implements ActionListener {
     
     @Override
     public void actionPerformed(ActionEvent e) {
+        
+        
 
         String id;
 
@@ -88,7 +90,6 @@ public class Controlador implements ActionListener {
             case "botonSubirFichero":
 
                 tratarSubirArchivo();
-                
                 
                 break;
 
@@ -259,31 +260,34 @@ public class Controlador implements ActionListener {
     private void tratarEliminarDirectorio() {
         
         nombreDirectorio = vistaPrincipal.getFicheroSeleccionado();
-        
-        String[] resultado = nombreDirectorio.split(" ", 2);
-        
-        if (resultado[0].equals("{DIR}")){
-            
-            nombreDirectorio = resultado[1];
+        if (nombreDirectorio != null){
+            String[] resultado = nombreDirectorio.split(" ", 2);
 
-            if (clienteFtp.conexion()){
+            if (resultado[0].equals("{DIR}")){
 
-                try {
+                nombreDirectorio = resultado[1];
 
-                    clienteFtp.eliminarDirectorio(nombreDirectorio);
+                if (clienteFtp.conexion()){
 
-                } catch (IOException ex) {
-                    JOptionPane.showMessageDialog(vistaPrincipal, "Error al eliminar la carpeta '" + nombreDirectorio + "'");
+                    try {
+
+                        clienteFtp.eliminarDirectorio(nombreDirectorio);
+
+                    } catch (IOException ex) {
+                        JOptionPane.showMessageDialog(vistaPrincipal, "Error al eliminar la carpeta '" + nombreDirectorio + "'");
+                    }
+
+                    cargarListaDirectorioPrincipal();
+
+                }else{
+                    JOptionPane.showMessageDialog(vistaPrincipal, "Error, no se puede eliminar el directório.");
                 }
-
-                cargarListaDirectorioPrincipal();
-
             }else{
-                JOptionPane.showMessageDialog(vistaPrincipal, "Error, no se puede eliminar el directório.");
+                JOptionPane.showMessageDialog(vistaPrincipal, "Error desconocido.");
             }
         }else{
-            JOptionPane.showMessageDialog(vistaPrincipal, "Error desconocido.");
+            JOptionPane.showMessageDialog(vistaPrincipal, "Error, no se ha seleccionado nada.");
         }
     }
-
+    
 }

@@ -6,6 +6,7 @@
 package proyectoftp.vista;
 
 import java.awt.event.ActionListener;
+import java.awt.event.MouseListener;
 import javax.swing.DefaultListModel;
 
 /**
