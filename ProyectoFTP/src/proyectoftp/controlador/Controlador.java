@@ -156,6 +156,7 @@ public class Controlador implements ActionListener {
         vistaPrincipal.setValorServidor("" + clienteFtp.ipServidor());
         vistaPrincipal.setValorUsuario(clienteFtp.getUsuario());
         vistaPrincipal.setValorDirectorioRaiz(clienteFtp.getDirectorioRaiz());
+        vistaPrincipal.setJLista(clienteFtp.listaNombreDatos());
         
         clienteFtp.cerrarSesion();
         
