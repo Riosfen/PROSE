@@ -26,7 +26,7 @@ public class VistaPrincipal extends javax.swing.JPanel {
         modelo = new DefaultListModel();
         jListItems.setModel(modelo);
     }
-
+    
     public void addControlador(ActionListener e){
         
         this.jButtonSubirFichero.addActionListener(e);
@@ -55,7 +55,9 @@ public class VistaPrincipal extends javax.swing.JPanel {
         
     }
     
-    
+    public void vaciarDatos(){
+        modelo.clear();
+    }
     
     public void setValorServidor(String direccionFtp){
         
@@ -63,7 +65,7 @@ public class VistaPrincipal extends javax.swing.JPanel {
         
     }
     
-    public void setValorDirectorioRaiz(String directorio){
+    public void setDirectorioRaiz(String directorio){
         
         this.jLabelDirectorioRaizValor.setText(directorio);
     }
@@ -89,7 +91,28 @@ public class VistaPrincipal extends javax.swing.JPanel {
         
     }
     
+    public int devolverPulsadoLista(){
+        
+        return jListItems.getSelectedIndex();
+    }
     
+    public String devolverObjeto(int pos){
+        
+        String fichero;
+        
+        fichero=String.valueOf(modelo.get(pos));
+        
+        return fichero;
+    }
+    
+    public String getFicheroSeleccionado(){
+        
+    	if(jListItems.isSelectionEmpty())
+    		return null;
+    	else
+    			
+    	return jListItems.getSelectedValue().toString();
+    }
     
     /**
      * This method is called from within the constructor to initialize the form.

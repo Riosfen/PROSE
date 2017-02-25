@@ -8,6 +8,8 @@ package proyectoftp.modelo;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.util.logging.Level;
@@ -69,6 +71,7 @@ public class ClienteFTP {
         try {
             clienteFtp.connect(InetAddress.getByName(FTP));
             
+            clienteFtp.enterLocalPassiveMode();
             
             logeado = clienteFtp.login(USU, PASSWORD);   
             
@@ -101,13 +104,14 @@ public class ClienteFTP {
             
             System.out.println("Respuesta recibida de conexión FTP:" + reply);
             
-            if(FTPReply.isPositiveCompletion(reply)){
+            if(FTPReply.isPositiveCompletion(reply))
+            {
                 System.out.println("Conectado Satisfactoriamente");    
-            
-            }else{
-                System.out.println("Imposible conectarse al servidor");
-                
             }
+            else
+                {
+                    System.out.println("Imposible conectarse al servidor");
+                }
         
         
         
@@ -120,7 +124,7 @@ public class ClienteFTP {
         
         clienteFtp.storeFile("/public_html/ftpProyecto/"+file.getName(), filtroLectura);
      
-        System.err.println("DENTRO");
+          System.err.println("DENTRO");
         
         filtroLectura.close();
     }
@@ -136,12 +140,12 @@ public class ClienteFTP {
         
     }
 
-    public String[] listaNombreDatos() {
+    public FTPFile[] listaNombreDatos() {
 
-        String[] lista = null;
+        FTPFile[] lista = null;
         
         try {
-            lista = clienteFtp.listNames();
+            lista = clienteFtp.listFiles();
         } catch (IOException ex) {
             Logger.getLogger(ClienteFTP.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -152,23 +156,51 @@ public class ClienteFTP {
 
     public void crearDirectorio(String nombreDirectorio) throws IOException {
     
-        clienteFtp.makeDirectory(nombreDirectorio);
+        boolean correcto = clienteFtp.makeDirectory(rutaActual() + nombreDirectorio);
+        
+        if (correcto) {
+            System.out.println("El directorio se ha creado correctamente: " + nombreDirectorio);
+        } else {
+            System.out.println("Error al crear el directorio '" + nombreDirectorio + "'.");
+        }
         
     }
 
     public void eliminarDirectorio(String nombreDirectorio) throws IOException {
         
-        clienteFtp.removeDirectory(rutaActual() + nombreDirectorio);
+        boolean correcto = clienteFtp.removeDirectory(rutaActual() + nombreDirectorio);
+        
+        if (correcto) {
+            System.out.println("El directorio se ha borrado correctamente: " + nombreDirectorio);
+        } else {
+            System.out.println("Error al borrar el directorio'" + nombreDirectorio + "'.");
+        }
         
     }
-
+    
     private String rutaActual() {
-        String ruta = "/";
+        String ruta = "/public_html/ftpProyecto/";
         
-        
+        //TODO hacer que cuando naveguemos por las carpetas se actualize
         
         return ruta;
     }
+
+    public boolean descargarFichero(String ruta, String fichero) throws FileNotFoundException, IOException{
+      
+        boolean descargar;
+        
+        FileOutputStream fos = new FileOutputStream(ruta);
+        descargar=clienteFtp.retrieveFile("/public_html/ftpProyecto/" + fichero, fos);
+            
+        return descargar;
+       
+    }
     
+    public boolean borrarFichero(String nombreFichero) throws IOException{
+        
+    return clienteFtp.deleteFile(nombreFichero);	
+			
+    }
     
 }

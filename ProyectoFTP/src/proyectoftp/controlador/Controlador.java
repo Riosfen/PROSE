@@ -7,12 +7,14 @@ package proyectoftp.controlador;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
 import java.io.File;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import org.apache.commons.net.ftp.FTPFile;
 import proyectoftp.modelo.ClienteFTP;
 import proyectoftp.vista.VistaPrincipal;
 
@@ -28,14 +30,49 @@ public class Controlador implements ActionListener {
     private String nombreDirectorio;
     
     
-    public Controlador(VistaPrincipal v, ClienteFTP c) {
+    public Controlador(VistaPrincipal v, ClienteFTP c){
+    
         this.clienteFtp = c;
         this.vistaPrincipal = v;
         
-        cargarDatosConexion();
-    
+        logeado = clienteFtp.conexion();
+        
+        //explorar();
+        
+        vistaPrincipal.setValorUsuario(clienteFtp.getUsuario());
+        vistaPrincipal.setValorServidor(clienteFtp.ipServidor().toString());
+        vistaPrincipal.setDirectorioRaiz(clienteFtp.getDirectorioRaiz());
+        
+        //clienteFtp.listadoArchivos();
+        
+        cargarListaDirectorioPrincipal();
+        
     }
 
+    
+    
+    private void cargarListaDirectorioPrincipal() {
+       
+        vistaPrincipal.vaciarDatos();
+        
+        clienteFtp.cambiarDirecctorio();
+        
+        String archivo;
+        FTPFile[] archivos = clienteFtp.listaNombreDatos();
+        
+        for (int i=0; i<archivos.length; i++){
+            
+            if (archivos[i].isDirectory()){
+                archivo="{DIR} " + archivos[i].getName();
+                vistaPrincipal.annadirDato(archivo);
+            }else{
+               archivo=archivos[i].getName();
+               vistaPrincipal.annadirDato(archivo);
+            }
+            
+        }
+        
+    }
     
     
     
@@ -49,16 +86,21 @@ public class Controlador implements ActionListener {
         switch (id) {
 
             case "botonSubirFichero":
-                
+
                 tratarSubirArchivo();
+                
                 
                 break;
 
             case "botonDescargarFichero":
+                
+                descargarFichero();
 
                 break;
 
             case "botonEliminarFichero":
+                
+                tratarBorrarFichero();
 
                 break;
 
@@ -75,7 +117,7 @@ public class Controlador implements ActionListener {
                 break;
 
             case "botonSalir":
-
+                clienteFtp.cerrarSesion();
                 System.exit(0);
                 
                 break;
@@ -83,6 +125,80 @@ public class Controlador implements ActionListener {
 
     }
     
+    private void tratarBorrarFichero() {
+		// TODO Auto-generated method stub
+    	
+    	String nomFich=vistaPrincipal.getFicheroSeleccionado();
+    	if(nomFich!=null){
+            
+            try {
+                if(clienteFtp.borrarFichero(nomFich)){
+                    
+                    JOptionPane.showMessageDialog(vistaPrincipal, "Se ha borrado correctamente");
+
+                    cargarListaDirectorioPrincipal();
+                }
+                else
+                    JOptionPane.showMessageDialog(vistaPrincipal, "Ha habido un error");
+
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+            
+    	}else{
+            JOptionPane.showMessageDialog(vistaPrincipal, "Selecciona uno de los ficheros de la lista");
+    	}
+		
+    }
+    
+    private void descargarFichero() {
+        
+        int pos, correcto;
+        boolean descargar;
+        String fichero;
+        FTPFile fFTP;
+
+        JFileChooser exploradorArchivos = new JFileChooser();
+        pos = vistaPrincipal.devolverPulsadoLista();
+
+        if (pos <= -1) {
+            JOptionPane.showMessageDialog(vistaPrincipal, "Debes de pulsar un archivo para poder borrar", "Error", JOptionPane.ERROR_MESSAGE);
+        } else {
+            fichero = vistaPrincipal.devolverObjeto(pos);
+            fFTP=new FTPFile();
+            fFTP.setName(fichero);
+            if (fFTP.isDirectory()) {
+                JOptionPane.showMessageDialog(vistaPrincipal, "Debes seleccionar un fichero para descargar", "Error", JOptionPane.ERROR_MESSAGE);
+            } else {
+                correcto = exploradorArchivos.showOpenDialog(vistaPrincipal);
+                if (correcto == JFileChooser.APPROVE_OPTION) {
+                    File file = exploradorArchivos.getSelectedFile();
+
+                    try {
+
+                        descargar = clienteFtp.descargarFichero(file.getCanonicalPath(), fFTP.getName());
+                        comprobarDescargas(descargar);
+                    } catch (IOException ex) {
+                        Logger.getLogger(Controlador.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+
+                }
+
+            }
+
+        }
+    }
+
+    private void comprobarDescargas(boolean descargar) {
+        
+        if (descargar){
+            JOptionPane.showMessageDialog(vistaPrincipal, "La descarga ha sido un éxito", "Descargas", JOptionPane.INFORMATION_MESSAGE);
+        }else{
+            JOptionPane.showMessageDialog(vistaPrincipal, "No se ha podido realizar la descarga", "Descargas", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
     private void tratarSubirArchivo(){
         int correcto;
         
@@ -118,48 +234,56 @@ public class Controlador implements ActionListener {
     }
 
     private void tratarCrearDirectorio() {
+        nombreDirectorio = JOptionPane.showInputDialog(vistaPrincipal, "Introduce el nombre del directório.");
+        nombreDirectorio = nombreDirectorio.trim();
         
-        nombreDirectorio = "/" + JOptionPane.showInputDialog(vistaPrincipal, "Introduce el nombre del directório.");
-        
-        logeado = clienteFtp.conexion();
+        if (!nombreDirectorio.equals("") && nombreDirectorio != null){
 
-        try {
-            
-            clienteFtp.crearDirectorio(nombreDirectorio);
+            logeado = clienteFtp.conexion();
+
+            try {
+
+                clienteFtp.crearDirectorio(nombreDirectorio);
+
+            } catch (IOException ex) {
+                JOptionPane.showMessageDialog(vistaPrincipal, "Error al crear la carpeta '" + nombreDirectorio + "'");
+            }
+
+            cargarListaDirectorioPrincipal();
         
-        } catch (IOException ex) {
-            JOptionPane.showMessageDialog(vistaPrincipal, "Error al crear la carpeta '" + nombreDirectorio + "'");
+        }else{
+            JOptionPane.showMessageDialog(vistaPrincipal, "Error, no se puede crear el directório.");
         }
-        
     }
 
     private void tratarEliminarDirectorio() {
         
-        nombreDirectorio = JOptionPane.showInputDialog(vistaPrincipal, "Introduce el nombre del directório.", "Eliminar Directório", JOptionPane.OK_CANCEL_OPTION);
-       
-        logeado = clienteFtp.conexion();
-
-        try {
+        nombreDirectorio = vistaPrincipal.getFicheroSeleccionado();
+        
+        String[] resultado = nombreDirectorio.split(" ", 2);
+        
+        if (resultado[0].equals("{DIR}")){
             
-            clienteFtp.eliminarDirectorio(nombreDirectorio);
-        
-        } catch (IOException ex) {
-            JOptionPane.showMessageDialog(vistaPrincipal, "Error al eliminar la carpeta '" + nombreDirectorio + "'");
-        }
-        
-    }
+            nombreDirectorio = resultado[1];
 
-    private void cargarDatosConexion() {
-        
-        clienteFtp.conexion();
-        
-        vistaPrincipal.setValorServidor("" + clienteFtp.ipServidor());
-        vistaPrincipal.setValorUsuario(clienteFtp.getUsuario());
-        vistaPrincipal.setValorDirectorioRaiz(clienteFtp.getDirectorioRaiz());
-        vistaPrincipal.setJLista(clienteFtp.listaNombreDatos());
-        
-        clienteFtp.cerrarSesion();
-        
+            if (clienteFtp.conexion()){
+
+                try {
+
+                    clienteFtp.eliminarDirectorio(nombreDirectorio);
+
+                } catch (IOException ex) {
+                    JOptionPane.showMessageDialog(vistaPrincipal, "Error al eliminar la carpeta '" + nombreDirectorio + "'");
+                }
+
+                cargarListaDirectorioPrincipal();
+
+            }else{
+                JOptionPane.showMessageDialog(vistaPrincipal, "Error, no se puede eliminar el directório.");
+            }
+        }else{
+            JOptionPane.showMessageDialog(vistaPrincipal, "Error desconocido.");
+        }
     }
 
 }
