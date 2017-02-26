@@ -50,6 +50,11 @@ public class VistaPrincipal extends javax.swing.JPanel {
         
     }
     
+    public void controladorLista(MouseListener m){
+    	this.jListItems.addMouseListener(m);
+    
+    }
+    
     public void annadirDato(String dato){
         
         modelo.addElement(dato);    
@@ -114,6 +119,7 @@ public class VistaPrincipal extends javax.swing.JPanel {
     			
     	return jListItems.getSelectedValue().toString();
     }
+    
     
     /**
      * This method is called from within the constructor to initialize the form.

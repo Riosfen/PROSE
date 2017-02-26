@@ -7,7 +7,8 @@ package proyectoftp.controlador;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
 import java.util.logging.Level;
@@ -22,7 +23,7 @@ import proyectoftp.vista.VistaPrincipal;
  *
  * @author alumno2damdiurno
  */
-public class Controlador implements ActionListener {
+public class Controlador extends MouseAdapter implements ActionListener {
 
     private VistaPrincipal vistaPrincipal;
     private ClienteFTP clienteFtp;
@@ -37,13 +38,9 @@ public class Controlador implements ActionListener {
         
         logeado = clienteFtp.conexion();
         
-        //explorar();
-        
         vistaPrincipal.setValorUsuario(clienteFtp.getUsuario());
         vistaPrincipal.setValorServidor(clienteFtp.ipServidor().toString());
-        vistaPrincipal.setDirectorioRaiz(clienteFtp.getDirectorioRaiz());
-        
-        //clienteFtp.listadoArchivos();
+        vistaPrincipal.setDirectorioRaiz(clienteFtp.getDirectorioActual());
         
         cargarListaDirectorioPrincipal();
         
@@ -54,8 +51,6 @@ public class Controlador implements ActionListener {
     private void cargarListaDirectorioPrincipal() {
        
         vistaPrincipal.vaciarDatos();
-        
-        clienteFtp.cambiarDirecctorio();
         
         String archivo;
         FTPFile[] archivos = clienteFtp.listaNombreDatos();
@@ -74,7 +69,47 @@ public class Controlador implements ActionListener {
         
     }
     
-    
+    @Override
+    public void mouseClicked(MouseEvent e) {
+        
+        if(e.getClickCount()==2){
+
+            if(clienteFtp.esDirectorio(this.vistaPrincipal.getFicheroSeleccionado())){
+
+                vistaPrincipal.setDirectorio(clienteFtp.getDirectorioActual());
+                cargarListaDirectorioPrincipal();
+            }
+
+        }else{
+            if(clienteFtp.esDirectorio(this.vistaPrincipal.getFicheroSeleccionado())){
+            
+                int numArchivos = 0;
+                FTPFile[] archivos = clienteFtp.listaNombreDatos();
+                numArchivos = archivos.length;
+                
+                if (numArchivos > 0){
+                    
+                    vistaPrincipal.setDirectorio(clienteFtp.getDirectorioActual() + ", " + numArchivos);
+                }else{
+                    
+                    vistaPrincipal.setDirectorio(clienteFtp.getDirectorioActual());
+                }
+                
+                vistaPrincipal.setDirectorioActual("/" + this.vistaPrincipal.getFicheroSeleccionado().replace("{DIR}","").trim());
+                
+                try {
+                    clienteFtp.getConexion().changeToParentDirectory();
+                } catch (IOException ex) {
+                    Logger.getLogger(Controlador.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }else{
+                
+                vistaPrincipal.setDirectorio(clienteFtp.getDirectorioActual());
+                vistaPrincipal.setDirectorioActual("/" + this.vistaPrincipal.getFicheroSeleccionado());
+            }
+        }
+
+    }
     
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -127,7 +162,6 @@ public class Controlador implements ActionListener {
     }
     
     private void tratarBorrarFichero() {
-		// TODO Auto-generated method stub
     	
     	String nomFich=vistaPrincipal.getFicheroSeleccionado();
     	if(nomFich!=null){
@@ -143,7 +177,6 @@ public class Controlador implements ActionListener {
                     JOptionPane.showMessageDialog(vistaPrincipal, "Ha habido un error");
 
             } catch (IOException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
             
@@ -164,13 +197,13 @@ public class Controlador implements ActionListener {
         pos = vistaPrincipal.devolverPulsadoLista();
 
         if (pos <= -1) {
-            JOptionPane.showMessageDialog(vistaPrincipal, "Debes de pulsar un archivo para poder borrar", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(vistaPrincipal, "Debes de pulsar un archivo para poder descargarlo.", "Error", JOptionPane.ERROR_MESSAGE);
         } else {
             fichero = vistaPrincipal.devolverObjeto(pos);
             fFTP=new FTPFile();
             fFTP.setName(fichero);
             if (fFTP.isDirectory()) {
-                JOptionPane.showMessageDialog(vistaPrincipal, "Debes seleccionar un fichero para descargar", "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(vistaPrincipal, "Debes seleccionar un fichero para descargar.", "Error", JOptionPane.ERROR_MESSAGE);
             } else {
                 correcto = exploradorArchivos.showOpenDialog(vistaPrincipal);
                 if (correcto == JFileChooser.APPROVE_OPTION) {
@@ -236,24 +269,28 @@ public class Controlador implements ActionListener {
 
     private void tratarCrearDirectorio() {
         nombreDirectorio = JOptionPane.showInputDialog(vistaPrincipal, "Introduce el nombre del directório.");
+        if (nombreDirectorio != null){
         nombreDirectorio = nombreDirectorio.trim();
         
-        if (!nombreDirectorio.equals("") && nombreDirectorio != null){
+            if (!nombreDirectorio.equals("")){
 
-            logeado = clienteFtp.conexion();
+                logeado = clienteFtp.conexion();
 
-            try {
+                try {
 
-                clienteFtp.crearDirectorio(nombreDirectorio);
+                    clienteFtp.crearDirectorio(nombreDirectorio);
 
-            } catch (IOException ex) {
-                JOptionPane.showMessageDialog(vistaPrincipal, "Error al crear la carpeta '" + nombreDirectorio + "'");
-            }
+                } catch (IOException ex) {
+                    JOptionPane.showMessageDialog(vistaPrincipal, "Error al crear la carpeta '" + nombreDirectorio + "'");
+                }
 
-            cargarListaDirectorioPrincipal();
-        
+                cargarListaDirectorioPrincipal();
+
+            }else{
+                JOptionPane.showMessageDialog(vistaPrincipal, "Error, no se puede crear el directório.");
+            } 
         }else{
-            JOptionPane.showMessageDialog(vistaPrincipal, "Error, no se puede crear el directório.");
+            JOptionPane.showMessageDialog(vistaPrincipal, "Error, se ha dejado el campo vacio.");
         }
     }
 
@@ -261,7 +298,7 @@ public class Controlador implements ActionListener {
         
         nombreDirectorio = vistaPrincipal.getFicheroSeleccionado();
         if (nombreDirectorio != null){
-            String[] resultado = nombreDirectorio.split(" ", 2);
+        String[] resultado = nombreDirectorio.split(" ", 2);
 
             if (resultado[0].equals("{DIR}")){
 
@@ -283,7 +320,7 @@ public class Controlador implements ActionListener {
                     JOptionPane.showMessageDialog(vistaPrincipal, "Error, no se puede eliminar el directório.");
                 }
             }else{
-                JOptionPane.showMessageDialog(vistaPrincipal, "Error desconocido.");
+                JOptionPane.showMessageDialog(vistaPrincipal, "Error, solo se pueden borrar directorios.");
             }
         }else{
             JOptionPane.showMessageDialog(vistaPrincipal, "Error, no se ha seleccionado nada.");

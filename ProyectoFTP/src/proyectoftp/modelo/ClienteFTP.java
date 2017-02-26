@@ -29,6 +29,7 @@ public class ClienteFTP {
     private static final String FTP = "josemanuelarahal.esy.es";
     private static final String USU = "u599502366";
     private static final String PASSWORD = "aprobado2016";
+    private String rutaActual = "/public_html/ftpProyecto";
     
     public ClienteFTP(){
         clienteFtp = new FTPClient();
@@ -44,15 +45,19 @@ public class ClienteFTP {
         return USU;
     }
     
-    public String getDirectorioRaiz(){
+    public String getDirectorioActual(){
         
         String raiz = null;
         
         try {
             
-            clienteFtp.changeWorkingDirectory("/public_html/ftpProyecto");
+            if (clienteFtp.changeWorkingDirectory(rutaActual)){
+                raiz = clienteFtp.printWorkingDirectory();
+                System.err.println("entro");
+            }else{
+                System.out.println("Error, no se puede acceder a '" + rutaActual + "'.");
+            }
 
-            raiz = clienteFtp.printWorkingDirectory();
             
         } catch (IOException ex) {
             Logger.getLogger(ClienteFTP.class.getName()).log(Level.SEVERE, null, ex);
@@ -128,17 +133,6 @@ public class ClienteFTP {
         
         filtroLectura.close();
     }
-    
-    public void cambiarDirecctorio(){
-        
-        try {
-            clienteFtp.changeWorkingDirectory("/public_html/ftpProyecto");
-        } catch (IOException ex) {
-            Logger.getLogger(ClienteFTP.class.getName()).log(Level.SEVERE, null, ex);
-        }
-       
-        
-    }
 
     public FTPFile[] listaNombreDatos() {
 
@@ -156,7 +150,7 @@ public class ClienteFTP {
 
     public void crearDirectorio(String nombreDirectorio) throws IOException {
     
-        boolean correcto = clienteFtp.makeDirectory(rutaActual() + nombreDirectorio);
+        boolean correcto = clienteFtp.makeDirectory(getDirectorioActual() + nombreDirectorio);
         
         if (correcto) {
             System.out.println("El directorio se ha creado correctamente: " + nombreDirectorio);
@@ -168,7 +162,7 @@ public class ClienteFTP {
 
     public void eliminarDirectorio(String nombreDirectorio) throws IOException {
         
-        boolean correcto = clienteFtp.removeDirectory(rutaActual() + nombreDirectorio);
+        boolean correcto = clienteFtp.removeDirectory(getDirectorioActual() + nombreDirectorio);
         
         if (correcto) {
             System.out.println("El directorio se ha borrado correctamente: " + nombreDirectorio);
@@ -178,12 +172,10 @@ public class ClienteFTP {
         
     }
     
-    private String rutaActual() {
-        String ruta = "/public_html/ftpProyecto/";
+    private void cambiarDirectorio(String direccion) {
+        rutaActual = rutaActual + direccion + "/";
         
-        //TODO hacer que cuando naveguemos por las carpetas se actualize
-        
-        return ruta;
+        getDirectorioActual();
     }
 
     public boolean descargarFichero(String ruta, String fichero) throws FileNotFoundException, IOException{
@@ -201,6 +193,41 @@ public class ClienteFTP {
         
     return clienteFtp.deleteFile(nombreFichero);	
 			
+    }
+    
+    public boolean esDirectorio(String aux) {
+
+    	boolean encontrado=false;
+    	
+    	if(aux.startsWith("{DIR}"))
+    	{
+    		encontrado=true;
+    		aux=aux.replace("{DIR}","").trim();
+    		try {
+    			if(aux.equalsIgnoreCase(".")){
+                            
+                            clienteFtp.changeToParentDirectory();
+                            rutaActual = clienteFtp.printWorkingDirectory();
+    				
+    			}else if(aux.equalsIgnoreCase("..")){
+                            
+                            clienteFtp.changeToParentDirectory();
+                            clienteFtp.changeToParentDirectory();
+                            rutaActual = clienteFtp.printWorkingDirectory();
+                            
+                        }else {
+
+                            rutaActual = clienteFtp.printWorkingDirectory()+"/"+aux;
+                            clienteFtp.changeWorkingDirectory(clienteFtp.printWorkingDirectory()+"/"+aux);
+
+                        }
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+    		
+    	}
+    	
+    	return encontrado;
     }
     
 }

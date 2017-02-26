@@ -25,9 +25,9 @@ public class ProyectoFTP {
         VistaPrincipal vista = new VistaPrincipal();
         ClienteFTP cliente = new ClienteFTP();
         Controlador controlador = new Controlador(vista, cliente);
-    
         
         vista.addControlador(controlador);
+        vista.controladorLista(controlador);
         
         
         ventana.add(vista);
